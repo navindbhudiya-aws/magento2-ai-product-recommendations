@@ -38,6 +38,20 @@ class RecommendationService implements RecommendationServiceInterface
     private const CACHE_PREFIX = 'ai_rec_';
 
     /**
+     * Static flag to prevent recursion
+     *
+     * @var bool
+     */
+    private static bool $isProcessing = false;
+
+    /**
+     * In-memory cache to avoid repeated database calls
+     *
+     * @var array
+     */
+    private static array $memoryCache = [];
+
+    /**
      * @var ChromaClient
      */
     private ChromaClient $chromaClient;
@@ -144,14 +158,30 @@ class RecommendationService implements RecommendationServiceInterface
      */
     public function getRelatedProducts($product, ?int $limit = null, ?int $storeId = null): array
     {
+        // Prevent infinite recursion
+        if (self::$isProcessing) {
+            return [];
+        }
+
         if (!$this->config->isEnabled($storeId) || !$this->config->isRelatedEnabled($storeId)) {
             return [];
         }
 
-        $limit = $limit ?? $this->config->getRelatedCount($storeId);
-        $results = $this->getRecommendationsWithScores($product, self::TYPE_RELATED, $limit, $storeId);
+        try {
+            self::$isProcessing = true;
+            
+            $limit = $limit ?? $this->config->getRelatedCount($storeId);
+            $results = $this->getRecommendationsWithScores($product, self::TYPE_RELATED, $limit, $storeId);
 
-        return array_map(fn($result) => $result->getProduct(), $results);
+            $products = array_map(fn($result) => $result->getProduct(), $results);
+            
+            self::$isProcessing = false;
+            return $products;
+        } catch (\Exception $e) {
+            self::$isProcessing = false;
+            $this->log('getRelatedProducts error: ' . $e->getMessage());
+            return [];
+        }
     }
 
     /**
@@ -159,14 +189,30 @@ class RecommendationService implements RecommendationServiceInterface
      */
     public function getCrossSellProducts($product, ?int $limit = null, ?int $storeId = null): array
     {
+        // Prevent infinite recursion
+        if (self::$isProcessing) {
+            return [];
+        }
+
         if (!$this->config->isEnabled($storeId) || !$this->config->isCrossSellEnabled($storeId)) {
             return [];
         }
 
-        $limit = $limit ?? $this->config->getCrossSellCount($storeId);
-        $results = $this->getRecommendationsWithScores($product, self::TYPE_CROSSSELL, $limit, $storeId);
+        try {
+            self::$isProcessing = true;
+            
+            $limit = $limit ?? $this->config->getCrossSellCount($storeId);
+            $results = $this->getRecommendationsWithScores($product, self::TYPE_CROSSSELL, $limit, $storeId);
 
-        return array_map(fn($result) => $result->getProduct(), $results);
+            $products = array_map(fn($result) => $result->getProduct(), $results);
+            
+            self::$isProcessing = false;
+            return $products;
+        } catch (\Exception $e) {
+            self::$isProcessing = false;
+            $this->log('getCrossSellProducts error: ' . $e->getMessage());
+            return [];
+        }
     }
 
     /**
@@ -174,14 +220,30 @@ class RecommendationService implements RecommendationServiceInterface
      */
     public function getUpSellProducts($product, ?int $limit = null, ?int $storeId = null): array
     {
+        // Prevent infinite recursion
+        if (self::$isProcessing) {
+            return [];
+        }
+
         if (!$this->config->isEnabled($storeId) || !$this->config->isUpSellEnabled($storeId)) {
             return [];
         }
 
-        $limit = $limit ?? $this->config->getUpSellCount($storeId);
-        $results = $this->getRecommendationsWithScores($product, self::TYPE_UPSELL, $limit, $storeId);
+        try {
+            self::$isProcessing = true;
+            
+            $limit = $limit ?? $this->config->getUpSellCount($storeId);
+            $results = $this->getRecommendationsWithScores($product, self::TYPE_UPSELL, $limit, $storeId);
 
-        return array_map(fn($result) => $result->getProduct(), $results);
+            $products = array_map(fn($result) => $result->getProduct(), $results);
+            
+            self::$isProcessing = false;
+            return $products;
+        } catch (\Exception $e) {
+            self::$isProcessing = false;
+            $this->log('getUpSellProducts error: ' . $e->getMessage());
+            return [];
+        }
     }
 
     /**
@@ -399,13 +461,21 @@ class RecommendationService implements RecommendationServiceInterface
      */
     private function buildWhereFilter(ProductInterface $product, string $type, int $storeId): array
     {
-        // ChromaDB requires multiple conditions to be wrapped in $and operator
-        return [
-            '$and' => [
-                ['product_id' => ['$ne' => (int) $product->getId()]],
-                ['store_id' => ['$eq' => $storeId]]
-            ]
-        ];
+        $conditions = [];
+
+        // Exclude current product
+        $conditions[] = ['product_id' => ['$ne' => (int) $product->getId()]];
+
+        // Add store filter
+        $conditions[] = ['store_id' => $storeId];
+
+        // ChromaDB requires $and operator for multiple conditions
+        if (count($conditions) > 1) {
+            return ['$and' => $conditions];
+        }
+
+        // Single condition doesn't need $and
+        return $conditions[0] ?? [];
     }
 
     /**
@@ -668,34 +738,64 @@ class RecommendationService implements RecommendationServiceInterface
      */
     private function hydrateResults(array $cachedData, string $type, int $limit): array
     {
-        $results = [];
-        $count = 0;
+        if (empty($cachedData)) {
+            return [];
+        }
 
+        // Collect product IDs
+        $productIds = [];
+        $dataByProductId = [];
+        
         foreach ($cachedData as $item) {
-            if ($count >= $limit) {
+            if (count($productIds) >= $limit) {
                 break;
             }
+            $productId = (int) $item['product_id'];
+            $productIds[] = $productId;
+            $dataByProductId[$productId] = $item;
+        }
 
-            try {
-                $product = $this->productRepository->getById((int) $item['product_id']);
+        if (empty($productIds)) {
+            return [];
+        }
 
+        // Load all products in one query using collection
+        try {
+            $collection = $this->productCollectionFactory->create();
+            $collection->addIdFilter($productIds)
+                ->addAttributeToSelect(['name', 'sku', 'price', 'small_image', 'url_key'])
+                ->addAttributeToFilter('status', \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED);
+            
+            // Maintain order
+            $collection->getSelect()->order(
+                new \Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $productIds) . ')')
+            );
+
+            $results = [];
+            foreach ($collection->getItems() as $product) {
+                $productId = (int) $product->getId();
+                if (!isset($dataByProductId[$productId])) {
+                    continue;
+                }
+                
+                $item = $dataByProductId[$productId];
+                
                 /** @var RecommendationResultInterface $result */
                 $result = $this->resultFactory->create();
                 $result->setProduct($product)
-                    ->setScore((float) $item['score'])
-                    ->setDistance((float) $item['distance'])
+                    ->setScore((float) ($item['score'] ?? 0))
+                    ->setDistance((float) ($item['distance'] ?? 0))
                     ->setType($type)
                     ->setMetadata($item['metadata'] ?? []);
 
                 $results[] = $result;
-                $count++;
-            } catch (\Exception $e) {
-                // Product no longer exists, skip
-                continue;
             }
-        }
 
-        return $results;
+            return $results;
+        } catch (\Exception $e) {
+            $this->log('hydrateResults error: ' . $e->getMessage());
+            return [];
+        }
     }
 
     /**

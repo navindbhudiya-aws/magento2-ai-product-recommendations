@@ -12,8 +12,12 @@ declare(strict_types=1);
 
 namespace Navindbhudiya\ProductRecommendation\Plugin\Checkout;
 
+use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ResourceModel\Product\Collection;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Checkout\Block\Cart\Crosssell;
 use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Store\Model\StoreManagerInterface;
 use Navindbhudiya\ProductRecommendation\Api\RecommendationServiceInterface;
 use Navindbhudiya\ProductRecommendation\Helper\Config;
 use Psr\Log\LoggerInterface;
@@ -23,6 +27,13 @@ use Psr\Log\LoggerInterface;
  */
 class CrosssellProducts
 {
+    /**
+     * Static flag to prevent recursion
+     *
+     * @var bool
+     */
+    private static bool $isProcessing = false;
+
     /**
      * @var RecommendationServiceInterface
      */
@@ -44,80 +55,190 @@ class CrosssellProducts
     private LoggerInterface $logger;
 
     /**
+     * @var CollectionFactory
+     */
+    private CollectionFactory $productCollectionFactory;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private StoreManagerInterface $storeManager;
+
+    /**
      * @param RecommendationServiceInterface $recommendationService
      * @param Config $config
      * @param CheckoutSession $checkoutSession
      * @param LoggerInterface $logger
+     * @param CollectionFactory $productCollectionFactory
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         RecommendationServiceInterface $recommendationService,
         Config $config,
         CheckoutSession $checkoutSession,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CollectionFactory $productCollectionFactory,
+        StoreManagerInterface $storeManager
     ) {
         $this->recommendationService = $recommendationService;
         $this->config = $config;
         $this->checkoutSession = $checkoutSession;
         $this->logger = $logger;
+        $this->productCollectionFactory = $productCollectionFactory;
+        $this->storeManager = $storeManager;
     }
 
     /**
      * After get items - replace with AI recommendations
      *
      * @param Crosssell $subject
-     * @param array $result
+     * @param mixed $result Original result (should be array)
      * @return array
      */
-    public function afterGetItems(Crosssell $subject, $result)
+    public function afterGetItems(Crosssell $subject, $result): array
     {
+        // Ensure result is array
+        $originalItems = is_array($result) ? $result : [];
+
+        // Prevent infinite recursion
+        if (self::$isProcessing) {
+            return $originalItems;
+        }
+
+        // Check if module is enabled
         if (!$this->config->isEnabled() || !$this->config->isCrossSellEnabled()) {
-            return $result;
+            return $originalItems;
         }
 
         try {
-            $quote = $this->checkoutSession->getQuote();
-            $items = $quote->getAllVisibleItems();
+            self::$isProcessing = true;
 
-            if (empty($items)) {
-                return $result;
+            // Get products from cart
+            $quote = $this->checkoutSession->getQuote();
+
+            if (!$quote || !$quote->getId()) {
+                self::$isProcessing = false;
+                return $originalItems;
             }
 
-            // Get AI cross-sell recommendations for the last added item
-            $lastItem = end($items);
+            $cartItems = $quote->getAllVisibleItems();
+
+            if (empty($cartItems)) {
+                self::$isProcessing = false;
+                return $originalItems;
+            }
+
+            // Get AI recommendations for the last added item
+            $lastItem = end($cartItems);
+            /** @var Product|null $product */
             $product = $lastItem->getProduct();
 
-            if (!$product) {
-                return $result;
+            if (!$product || !$product->getId()) {
+                self::$isProcessing = false;
+                return $originalItems;
             }
 
+            // Get AI recommendations
             $aiProducts = $this->recommendationService->getCrossSellProducts($product);
 
             if (empty($aiProducts)) {
+                self::$isProcessing = false;
+                // Fallback to native if configured
                 if ($this->config->isFallbackToNativeEnabled()) {
-                    return $result;
+                    return $originalItems;
                 }
+                return [];
             }
 
-            // Filter out products already in cart
+            // Get cart product IDs to filter out
             $cartProductIds = [];
-            foreach ($items as $item) {
-                $cartProductIds[] = $item->getProduct()->getId();
+            foreach ($cartItems as $item) {
+                $cartProductIds[] = (int) $item->getProduct()->getId();
             }
 
-            $filteredProducts = [];
+            // Extract product IDs from AI recommendations (excluding cart items)
+            $productIds = [];
             foreach ($aiProducts as $aiProduct) {
-                if (!in_array($aiProduct->getId(), $cartProductIds)) {
-                    $filteredProducts[] = $aiProduct;
+                $productId = (int) $aiProduct->getId();
+                if (!in_array($productId, $cartProductIds, true)) {
+                    $productIds[] = $productId;
                 }
             }
 
-            if (!empty($filteredProducts)) {
-                return $filteredProducts;
+            if (empty($productIds)) {
+                self::$isProcessing = false;
+                if ($this->config->isFallbackToNativeEnabled()) {
+                    return $originalItems;
+                }
+                return [];
             }
+
+            // Create collection and get items as array
+            $aiCollection = $this->createProductCollection($productIds);
+            $items = $aiCollection->getItems();
+
+            self::$isProcessing = false;
+            return $items;
+
         } catch (\Exception $e) {
-            $this->logger->error('[ProductRecommendation] CrosssellProducts plugin error: ' . $e->getMessage());
+            $this->logger->error(
+                '[ProductRecommendation] CrosssellProducts plugin error: ' . $e->getMessage()
+            );
+            self::$isProcessing = false;
+            return $originalItems;
+        }
+    }
+
+    /**
+     * Create product collection with specific IDs
+     *
+     * @param array $productIds
+     * @return Collection
+     */
+    private function createProductCollection(array $productIds): Collection
+    {
+        /** @var Collection $collection */
+        $collection = $this->productCollectionFactory->create();
+
+        $collection->addAttributeToSelect([
+            'name',
+            'sku',
+            'price',
+            'special_price',
+            'special_from_date',
+            'special_to_date',
+            'small_image',
+            'thumbnail',
+            'url_key',
+            'short_description'
+        ]);
+
+        $collection->addIdFilter($productIds);
+        $collection->addStoreFilter($this->storeManager->getStore()->getId());
+        $collection->addAttributeToFilter(
+            'status',
+            \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
+        );
+        $collection->addAttributeToFilter(
+            'visibility',
+            ['in' => [
+                \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_CATALOG,
+                \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH
+            ]]
+        );
+
+        // Add price data
+        $collection->addMinimalPrice()
+            ->addFinalPrice()
+            ->addTaxPercents();
+
+        // Maintain original order from AI recommendations
+        if (!empty($productIds)) {
+            $collection->getSelect()->order(
+                new \Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $productIds) . ')')
+            );
         }
 
-        return $result;
+        return $collection;
     }
 }

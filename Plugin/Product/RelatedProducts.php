@@ -13,8 +13,11 @@ declare(strict_types=1);
 namespace Navindbhudiya\ProductRecommendation\Plugin\Product;
 
 use Magento\Catalog\Block\Product\ProductList\Related;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Framework\Registry;
+use Magento\Store\Model\StoreManagerInterface;
 use Navindbhudiya\ProductRecommendation\Api\RecommendationServiceInterface;
 use Navindbhudiya\ProductRecommendation\Helper\Config;
 use Psr\Log\LoggerInterface;
@@ -24,6 +27,13 @@ use Psr\Log\LoggerInterface;
  */
 class RelatedProducts
 {
+    /**
+     * Static flag to prevent recursion
+     *
+     * @var bool
+     */
+    private static bool $isProcessing = false;
+
     /**
      * @var RecommendationServiceInterface
      */
@@ -45,71 +55,210 @@ class RelatedProducts
     private LoggerInterface $logger;
 
     /**
+     * @var CollectionFactory
+     */
+    private CollectionFactory $productCollectionFactory;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private StoreManagerInterface $storeManager;
+
+    /**
      * @param RecommendationServiceInterface $recommendationService
      * @param Config $config
      * @param Registry $registry
      * @param LoggerInterface $logger
+     * @param CollectionFactory $productCollectionFactory
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         RecommendationServiceInterface $recommendationService,
         Config $config,
         Registry $registry,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CollectionFactory $productCollectionFactory,
+        StoreManagerInterface $storeManager
     ) {
         $this->recommendationService = $recommendationService;
         $this->config = $config;
         $this->registry = $registry;
         $this->logger = $logger;
+        $this->productCollectionFactory = $productCollectionFactory;
+        $this->storeManager = $storeManager;
     }
 
     /**
-     * After get items - replace with AI recommendations
+     * After get items - replace with AI recommendations collection
      *
      * @param Related $subject
-     * @param Collection $result
+     * @param mixed $result Original result (could be Collection or array)
      * @return Collection
      */
-    public function afterGetItems(Related $subject, $result)
+    public function afterGetItems(Related $subject, $result): Collection
     {
+        // Prevent infinite recursion
+        if (self::$isProcessing) {
+            if ($result instanceof Collection) {
+                return $result;
+            }
+            return $this->createEmptyCollection();
+        }
+
+        // Check if module is enabled
         if (!$this->config->isEnabled() || !$this->config->isRelatedEnabled()) {
-            return $result;
+            if ($result instanceof Collection) {
+                return $result;
+            }
+            // If original was array, we still need to return Collection for template
+            return $this->createCollectionFromArray($result);
         }
 
         try {
+            self::$isProcessing = true;
+
+            /** @var Product|null $product */
             $product = $this->registry->registry('current_product');
 
-            if (!$product) {
-                return $result;
-            }
-
-            $aiProducts = $this->recommendationService->getRelatedProducts($product);
-            if (empty($aiProducts)) {
-                // Fallback to native if configured
-                if ($this->config->isFallbackToNativeEnabled()) {
+            if (!$product || !$product->getId()) {
+                self::$isProcessing = false;
+                if ($result instanceof Collection) {
                     return $result;
                 }
+                return $this->createEmptyCollection();
             }
 
-            // Return AI recommendations as collection
-            if (!empty($aiProducts)) {
-                // Convert array to collection-like object
-                return $this->createProductCollection($aiProducts);
+            // Get AI recommendations
+            $aiProducts = $this->recommendationService->getRelatedProducts($product);
+
+            if (empty($aiProducts)) {
+                self::$isProcessing = false;
+                // Fallback to native if configured
+                if ($this->config->isFallbackToNativeEnabled()) {
+                    if ($result instanceof Collection) {
+                        return $result;
+                    }
+                    return $this->createCollectionFromArray($result);
+                }
+                // Return empty collection
+                return $this->createEmptyCollection();
             }
+
+            // Extract product IDs from AI recommendations
+            $productIds = [];
+            foreach ($aiProducts as $aiProduct) {
+                $productIds[] = (int) $aiProduct->getId();
+            }
+            //var_dump($productIds);exit;
+            // Create new collection with AI product IDs
+            $aiCollection = $this->createProductCollection($productIds);
+
+            self::$isProcessing = false;
+            return $aiCollection;
+
         } catch (\Exception $e) {
-            $this->logger->error('[ProductRecommendation] RelatedProducts plugin error: ' . $e->getMessage());
+            $this->logger->error(
+                '[ProductRecommendation] RelatedProducts plugin error: ' . $e->getMessage()
+            );
+            self::$isProcessing = false;
+            if ($result instanceof Collection) {
+                return $result;
+            }
+            return $this->createEmptyCollection();
         }
-
-        return $result;
     }
 
     /**
-     * Create a pseudo-collection from product array
+     * Create collection from array of products or product IDs
      *
-     * @param array $products
-     * @return \ArrayObject
+     * @param mixed $items
+     * @return Collection
      */
-    private function createProductCollection(array $products)
+    private function createCollectionFromArray($items): Collection
     {
-        return new \ArrayObject($products);
+        if (!is_array($items) || empty($items)) {
+            return $this->createEmptyCollection();
+        }
+
+        $productIds = [];
+        foreach ($items as $item) {
+            if ($item instanceof Product) {
+                $productIds[] = (int) $item->getId();
+            } elseif (is_numeric($item)) {
+                $productIds[] = (int) $item;
+            }
+        }
+
+        if (empty($productIds)) {
+            return $this->createEmptyCollection();
+        }
+
+        return $this->createProductCollection($productIds);
+    }
+
+    /**
+     * Create product collection with specific IDs
+     *
+     * @param array $productIds
+     * @return Collection
+     */
+    private function createProductCollection(array $productIds): Collection
+    {
+        /** @var Collection $collection */
+        $collection = $this->productCollectionFactory->create();
+
+        $collection->addAttributeToSelect([
+            'name',
+            'sku',
+            'price',
+            'special_price',
+            'special_from_date',
+            'special_to_date',
+            'small_image',
+            'thumbnail',
+            'url_key',
+            'short_description'
+        ]);
+
+        $collection->addIdFilter($productIds);
+        $collection->addStoreFilter($this->storeManager->getStore()->getId());
+        $collection->addAttributeToFilter(
+            'status',
+            \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
+        );
+        $collection->addAttributeToFilter(
+            'visibility',
+            ['in' => [
+                \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_CATALOG,
+                \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH
+            ]]
+        );
+
+        // Add price data
+        $collection->addMinimalPrice()
+            ->addFinalPrice()
+            ->addTaxPercents();
+
+        // Maintain original order from AI recommendations
+        if (!empty($productIds)) {
+            $collection->getSelect()->order(
+                new \Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $productIds) . ')')
+            );
+        }
+
+        return $collection;
+    }
+
+    /**
+     * Create empty collection
+     *
+     * @return Collection
+     */
+    private function createEmptyCollection(): Collection
+    {
+        /** @var Collection $collection */
+        $collection = $this->productCollectionFactory->create();
+        $collection->addIdFilter([0]); // Filter that matches nothing
+        return $collection;
     }
 }
