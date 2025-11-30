@@ -64,6 +64,14 @@ class Config extends AbstractHelper
     private const XML_PATH_PERSONALIZED_SHOW_CATEGORY = 'product_recommendation/personalized/show_on_category';
     private const XML_PATH_PERSONALIZED_SHOW_PRODUCT = 'product_recommendation/personalized/show_on_product';
 
+    // LLM Re-ranking Configuration
+    private const XML_PATH_LLM_ENABLED = 'product_recommendation/llm_reranking/enabled';
+    private const XML_PATH_LLM_PROVIDER = 'product_recommendation/llm_reranking/provider';
+    private const XML_PATH_LLM_API_KEY = 'product_recommendation/llm_reranking/api_key';
+    private const XML_PATH_LLM_MODEL = 'product_recommendation/llm_reranking/model';
+    private const XML_PATH_LLM_TEMPERATURE = 'product_recommendation/llm_reranking/temperature';
+    private const XML_PATH_LLM_CANDIDATE_COUNT = 'product_recommendation/llm_reranking/candidate_count';
+
     /**
      * @var EncryptorInterface
      */
@@ -581,5 +589,106 @@ class Config extends AbstractHelper
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
+    }
+
+    // ==========================================
+    // LLM Re-ranking Configuration
+    // ==========================================
+
+    /**
+     * Check if LLM re-ranking is enabled
+     *
+     * @param int|null $storeId
+     * @return bool
+     */
+    public function isLlmRerankingEnabled(?int $storeId = null): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::XML_PATH_LLM_ENABLED,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Get LLM provider (claude or openai)
+     *
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getLlmProvider(?int $storeId = null): string
+    {
+        return (string) $this->scopeConfig->getValue(
+            self::XML_PATH_LLM_PROVIDER,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        ) ?: 'claude';
+    }
+
+    /**
+     * Get LLM API key (encrypted)
+     *
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getLlmApiKey(?int $storeId = null): string
+    {
+        $value = $this->scopeConfig->getValue(
+            self::XML_PATH_LLM_API_KEY,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+
+        if (empty($value)) {
+            return '';
+        }
+
+        return $this->encryptor->decrypt($value);
+    }
+
+    /**
+     * Get LLM model
+     *
+     * @param int|null $storeId
+     * @return string|null
+     */
+    public function getLlmModel(?int $storeId = null): ?string
+    {
+        return $this->scopeConfig->getValue(
+            self::XML_PATH_LLM_MODEL,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Get LLM temperature (0-1)
+     *
+     * @param int|null $storeId
+     * @return float
+     */
+    public function getLlmTemperature(?int $storeId = null): float
+    {
+        $value = $this->scopeConfig->getValue(
+            self::XML_PATH_LLM_TEMPERATURE,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+        return $value !== null ? (float) $value : 0.7;
+    }
+
+    /**
+     * Get number of candidates to send to LLM for re-ranking
+     *
+     * @param int|null $storeId
+     * @return int
+     */
+    public function getLlmCandidateCount(?int $storeId = null): int
+    {
+        return (int) $this->scopeConfig->getValue(
+            self::XML_PATH_LLM_CANDIDATE_COUNT,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        ) ?: 20;
     }
 }

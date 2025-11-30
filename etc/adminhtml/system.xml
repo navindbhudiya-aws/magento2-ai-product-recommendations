@@ -325,6 +325,70 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
+
+            <!-- LLM Re-Ranking Configuration -->
+            <group id="llm_reranking" translate="label comment" sortOrder="80"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>LLM Re-Ranking (AI Enhancement)</label>
+                <comment><![CDATA[Use Claude or GPT-4 to intelligently re-rank product recommendations for better relevance and conversion. This adds a second layer of AI reasoning on top of vector similarity.]]></comment>
+
+                <field id="enabled" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable LLM Re-Ranking</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Enable intelligent re-ranking using Large Language Models (Claude or GPT-4). Requires API key.]]></comment>
+                </field>
+
+                <field id="provider" translate="label comment" type="select" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>LLM Provider</label>
+                    <source_model>Navindbhudiya\ProductRecommendation\Model\Config\Source\LlmProvider</source_model>
+                    <comment><![CDATA[Choose your preferred AI provider. Claude is recommended for better e-commerce understanding.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="api_key" translate="label comment" type="obscure" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <comment><![CDATA[Your API key from Anthropic (Claude) or OpenAI (GPT-4). Get Claude API key: <a href="https://console.anthropic.com" target="_blank">https://console.anthropic.com</a>. Get OpenAI API key: <a href="https://platform.openai.com/api-keys" target="_blank">https://platform.openai.com/api-keys</a>]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="model" translate="label comment" type="select" sortOrder="40"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Model</label>
+                    <source_model>Navindbhudiya\ProductRecommendation\Model\Config\Source\LlmModel</source_model>
+                    <comment><![CDATA[Select the specific model to use. Leave empty to use provider defaults (Claude 3.5 Sonnet or GPT-4 Turbo).]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="temperature" translate="label comment" type="text" sortOrder="50"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Temperature</label>
+                    <comment><![CDATA[Controls randomness (0-1). Lower = more focused, Higher = more creative. Recommended: 0.7]]></comment>
+                    <validate>validate-number validate-number-range number-range-0-1</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="candidate_count" translate="label comment" type="text" sortOrder="60"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Candidate Count</label>
+                    <comment><![CDATA[Number of products to send to LLM for re-ranking. More = better results but higher cost. Recommended: 20]]></comment>
+                    <validate>validate-number validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
         </section>
     </system>
 </config>

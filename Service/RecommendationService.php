@@ -112,6 +112,11 @@ class RecommendationService implements RecommendationServiceInterface
     private StockHelper $stockHelper;
 
     /**
+     * @var LlmReRanker|null
+     */
+    private ?LlmReRanker $llmReRanker;
+
+    /**
      * @param ChromaClient $chromaClient
      * @param EmbeddingProviderInterface $embeddingProvider
      * @param ProductTextBuilder $textBuilder
@@ -124,6 +129,7 @@ class RecommendationService implements RecommendationServiceInterface
      * @param RecommendationResultInterfaceFactory $resultFactory
      * @param LoggerInterface $logger
      * @param StockHelper $stockHelper
+     * @param LlmReRanker|null $llmReRanker
      */
     public function __construct(
         ChromaClient $chromaClient,
@@ -137,7 +143,8 @@ class RecommendationService implements RecommendationServiceInterface
         SerializerInterface $serializer,
         RecommendationResultInterfaceFactory $resultFactory,
         LoggerInterface $logger,
-        StockHelper $stockHelper
+        StockHelper $stockHelper,
+        LlmReRanker $llmReRanker = null
     ) {
         $this->chromaClient = $chromaClient;
         $this->embeddingProvider = $embeddingProvider;
@@ -151,6 +158,7 @@ class RecommendationService implements RecommendationServiceInterface
         $this->resultFactory = $resultFactory;
         $this->logger = $logger;
         $this->stockHelper = $stockHelper;
+        $this->llmReRanker = $llmReRanker;
     }
 
     /**
@@ -551,6 +559,23 @@ class RecommendationService implements RecommendationServiceInterface
 
             if (count($results) >= $limit) {
                 break;
+            }
+        }
+
+        // Apply LLM re-ranking if enabled
+        if ($this->llmReRanker && $this->config->isLlmRerankingEnabled($storeId) && !empty($results)) {
+            try {
+                $results = $this->llmReRanker->rerank(
+                    $sourceProduct,
+                    $results,
+                    $type,
+                    null, // customerId - could be passed in future
+                    $limit,
+                    $storeId
+                );
+            } catch (\Exception $e) {
+                $this->log('LLM re-ranking failed, using vector similarity results: ' . $e->getMessage());
+                // Continue with original results if re-ranking fails
             }
         }
 
