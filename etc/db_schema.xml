@@ -85,4 +85,27 @@
         </index>
     </table>
 
+    <!-- Trending Products Cache -->
+    <table name="navindbhudiya_ai_trending_products" resource="default" engine="innodb" comment="Trending Products Cache">
+        <column xsi:type="int" name="trending_id" unsigned="true" nullable="false" identity="true" comment="Trending ID"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" comment="Product ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="decimal" name="trend_score" scale="6" precision="12" nullable="false" default="0" comment="Normalized Trend Score"/>
+        <column xsi:type="int" name="sales_count" unsigned="true" nullable="false" default="0" comment="Sales Count"/>
+        <column xsi:type="int" name="period_days" unsigned="true" nullable="false" default="7" comment="Period Days"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+        
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="trending_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="NAVINDBHUDIYA_AI_TRENDING_PRODUCT_STORE_PERIOD">
+            <column name="product_id"/>
+            <column name="store_id"/>
+            <column name="period_days"/>
+        </constraint>
+        <index referenceId="NAVINDBHUDIYA_AI_TRENDING_SCORE" indexType="btree">
+            <column name="trend_score"/>
+        </index>
+    </table>
+
 </schema>

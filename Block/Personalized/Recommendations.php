@@ -10,6 +10,7 @@ namespace Navindbhudiya\ProductRecommendation\Block\Personalized;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Block\Product\AbstractProduct;
 use Magento\Catalog\Block\Product\Context;
+use Magento\Catalog\Pricing\Price\SpecialPriceBulkResolverInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Data\Helper\PostHelper;
 use Magento\Framework\Url\EncoderInterface as UrlEncoder;
@@ -62,12 +63,23 @@ class Recommendations extends AbstractProduct
     private ?array $loadedProducts = null;
 
     /**
+     * @var SpecialPriceBulkResolverInterface
+     */
+    private SpecialPriceBulkResolverInterface $specialPriceBulkResolver;
+
+    /**
+     * @var array|null
+     */
+    private ?array $specialPriceMap = null;
+
+    /**
      * @param Context $context
      * @param PersonalizedRecommendationInterface $recommendationService
      * @param CustomerSession $customerSession
      * @param Config $config
      * @param PostHelper $postHelper
      * @param UrlEncoder $urlEncoder
+     * @param SpecialPriceBulkResolverInterface $specialPriceBulkResolver
      * @param array $data
      */
     public function __construct(
@@ -77,6 +89,7 @@ class Recommendations extends AbstractProduct
         Config $config,
         PostHelper $postHelper,
         UrlEncoder $urlEncoder,
+        SpecialPriceBulkResolverInterface $specialPriceBulkResolver,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -85,6 +98,7 @@ class Recommendations extends AbstractProduct
         $this->config = $config;
         $this->postHelper = $postHelper;
         $this->urlEncoder = $urlEncoder;
+        $this->specialPriceBulkResolver = $specialPriceBulkResolver;
     }
 
     /**
@@ -332,6 +346,38 @@ class Recommendations extends AbstractProduct
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    /**
+     * Get price render block
+     * Uses Magento's native special price map generation for configurable products
+     *
+     * @return \Magento\Framework\Pricing\Render|false
+     */
+    protected function getPriceRender()
+    {
+        $priceRender = $this->getLayout()->getBlock('product.price.render.default');
+
+        if (!$priceRender) {
+            return parent::getPriceRender();
+        }
+
+        $priceRender->setData('is_product_list', true);
+
+        // Generate special price map using Magento's native service
+        if ($this->specialPriceMap === null) {
+            $products = $this->getProducts();
+            if (!empty($products)) {
+                $this->specialPriceMap = $this->specialPriceBulkResolver->generateSpecialPriceMap(
+                    (int) $this->_storeManager->getStore()->getId(),
+                    $products
+                );
+            } else {
+                $this->specialPriceMap = [];
+            }
+        }
+
+        return $priceRender->setData('special_price_map', $this->specialPriceMap);
     }
 
     /**

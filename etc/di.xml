@@ -116,6 +116,31 @@
         </arguments>
     </type>
 
+    <!-- AI Enhancement Services -->
+    <type name="Navindbhudiya\ProductRecommendation\Service\DiversityFilter">
+        <arguments>
+            <argument name="logger" xsi:type="object">Navindbhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Navindbhudiya\ProductRecommendation\Service\RecommendationExplainer">
+        <arguments>
+            <argument name="logger" xsi:type="object">Navindbhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Navindbhudiya\ProductRecommendation\Service\TrendingBooster">
+        <arguments>
+            <argument name="logger" xsi:type="object">Navindbhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Navindbhudiya\ProductRecommendation\Cron\RefreshTrending">
+        <arguments>
+            <argument name="logger" xsi:type="object">Navindbhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
     <!-- CLI Commands -->
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
@@ -126,6 +151,7 @@
                 <item name="recommendation_clear" xsi:type="object">Navindbhudiya\ProductRecommendation\Console\Command\ClearCollection</item>
                 <item name="recommendation_personalized" xsi:type="object">Navindbhudiya\ProductRecommendation\Console\Command\GetPersonalizedRecommendations</item>
                 <item name="recommendation_refresh_profiles" xsi:type="object">Navindbhudiya\ProductRecommendation\Console\Command\RefreshProfiles</item>
+                <item name="recommendation_refresh_trending" xsi:type="object">Navindbhudiya\ProductRecommendation\Console\Command\RefreshTrending</item>
             </argument>
         </arguments>
     </type>
