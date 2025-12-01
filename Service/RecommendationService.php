@@ -19,12 +19,16 @@ use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\CatalogInventory\Helper\Stock as StockHelper;
+use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Store\Model\StoreManagerInterface;
+use Navindbhudiya\ProductRecommendation\Api\Data\LlmRankingInterfaceFactory;
 use Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface;
 use Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterfaceFactory;
 use Navindbhudiya\ProductRecommendation\Api\EmbeddingProviderInterface;
+use Navindbhudiya\ProductRecommendation\Api\LlmRankingRepositoryInterface;
 use Navindbhudiya\ProductRecommendation\Api\RecommendationServiceInterface;
 use Navindbhudiya\ProductRecommendation\Helper\Config;
 use Navindbhudiya\ProductRecommendation\Model\Cache\Type\Recommendation as RecommendationCache;
@@ -117,6 +121,26 @@ class RecommendationService implements RecommendationServiceInterface
     private ?LlmReRanker $llmReRanker;
 
     /**
+     * @var LlmRankingRepositoryInterface|null
+     */
+    private ?LlmRankingRepositoryInterface $llmRankingRepository;
+
+    /**
+     * @var LlmRankingInterfaceFactory|null
+     */
+    private ?LlmRankingInterfaceFactory $llmRankingFactory;
+
+    /**
+     * @var CustomerSession|null
+     */
+    private ?CustomerSession $customerSession;
+
+    /**
+     * @var DateTime|null
+     */
+    private ?DateTime $dateTime;
+
+    /**
      * @param ChromaClient $chromaClient
      * @param EmbeddingProviderInterface $embeddingProvider
      * @param ProductTextBuilder $textBuilder
@@ -130,6 +154,10 @@ class RecommendationService implements RecommendationServiceInterface
      * @param LoggerInterface $logger
      * @param StockHelper $stockHelper
      * @param LlmReRanker|null $llmReRanker
+     * @param LlmRankingRepositoryInterface $llmRankingRepository
+     * @param LlmRankingInterfaceFactory $llmRankingFactory
+     * @param CustomerSession $customerSession
+     * @param DateTime $dateTime
      */
     public function __construct(
         ChromaClient $chromaClient,
@@ -144,7 +172,11 @@ class RecommendationService implements RecommendationServiceInterface
         RecommendationResultInterfaceFactory $resultFactory,
         LoggerInterface $logger,
         StockHelper $stockHelper,
-        LlmReRanker $llmReRanker = null
+        LlmReRanker $llmReRanker = null,
+        LlmRankingRepositoryInterface $llmRankingRepository = null,
+        LlmRankingInterfaceFactory $llmRankingFactory = null,
+        CustomerSession $customerSession = null,
+        DateTime $dateTime = null
     ) {
         $this->chromaClient = $chromaClient;
         $this->embeddingProvider = $embeddingProvider;
@@ -159,6 +191,10 @@ class RecommendationService implements RecommendationServiceInterface
         $this->logger = $logger;
         $this->stockHelper = $stockHelper;
         $this->llmReRanker = $llmReRanker;
+        $this->llmRankingRepository = $llmRankingRepository;
+        $this->llmRankingFactory = $llmRankingFactory;
+        $this->customerSession = $customerSession;
+        $this->dateTime = $dateTime;
     }
 
     /**
@@ -314,14 +350,63 @@ class RecommendationService implements RecommendationServiceInterface
             $productId = (int) $product->getId();
             $limit = $limit ?? $this->getDefaultLimit($type, $storeId);
 
-            // Check cache
+            // Get customer ID if logged in
+            $customerId = null;
+            if ($this->customerSession && $this->customerSession->isLoggedIn()) {
+                $customerId = (int) $this->customerSession->getCustomerId();
+            }
+
+            // LAYER 1: Check Database (for logged-in customers only)
+            if ($customerId && $this->llmRankingRepository) {
+                try {
+                    $dbRanking = $this->llmRankingRepository->getByProductAndCustomer(
+                        $productId,
+                        $type,
+                        $customerId,
+                        $storeId
+                    );
+
+                    if ($dbRanking && !$dbRanking->isExpired()) {
+                        $this->log('🗄️ [DATABASE HIT] Returning stored LLM rankings', [
+                            'product_id' => $productId,
+                            'customer_id' => $customerId,
+                            'type' => $type,
+                            'created_at' => $dbRanking->getCreatedAt(),
+                            'expires_at' => $dbRanking->getExpiresAt(),
+                            'cost_saved' => '$0.018 (no API call)'
+                        ]);
+
+                        $rankedIds = $dbRanking->getRankedProductIds();
+                        return $this->hydrateFromProductIds($rankedIds, $type, $limit);
+                    }
+
+                    $this->log('🔍 [DATABASE MISS] No valid ranking in database for customer', [
+                        'customer_id' => $customerId,
+                        'product_id' => $productId
+                    ]);
+                } catch (\Exception $e) {
+                    $this->log('❌ Database check error: ' . $e->getMessage());
+                }
+            }
+
+            // LAYER 2: Check Cache
             $cacheKey = $this->getCacheKey($productId, $type, $storeId);
             if ($this->config->isCacheEnabled()) {
                 $cached = $this->cache->load($cacheKey);
                 if ($cached) {
+                    $this->log('💾 [CACHE HIT] Returning cached rankings', [
+                        'product_id' => $productId,
+                        'type' => $type,
+                        'cache_key' => $cacheKey,
+                        'cost_saved' => '$0.018 (no API call)'
+                    ]);
                     $cachedData = $this->serializer->unserialize($cached);
                     return $this->hydrateResults($cachedData, $type, $limit);
                 }
+                $this->log('🔍 [CACHE MISS] Will generate new recommendations', [
+                    'product_id' => $productId,
+                    'type' => $type
+                ]);
             }
 
             // Build query text from product
@@ -364,15 +449,73 @@ class RecommendationService implements RecommendationServiceInterface
             // Process results
             $results = $this->processResults($queryResult, $product, $type, $limit, $storeId);
 
-            // Cache results
-            if ($this->config->isCacheEnabled() && !empty($results)) {
-                $cacheData = $this->dehydrateResults($results);
-                $this->cache->save(
-                    $this->serializer->serialize($cacheData),
-                    $cacheKey,
-                    [RecommendationCache::CACHE_TAG],
-                    $this->config->getCacheLifetime()
-                );
+            // SAVE RESULTS (Hybrid Storage: Database + Cache)
+            if (!empty($results)) {
+                $rankedProductIds = array_map(fn($r) => (int)$r->getProduct()->getId(), $results);
+
+                // LAYER 1: Save to DATABASE for logged-in customers
+                if ($customerId && $this->llmRankingRepository && $this->llmRankingFactory && $this->dateTime) {
+                    try {
+                        $expiresAt = gmdate('Y-m-d H:i:s', $this->dateTime->gmtTimestamp() + $this->config->getCacheLifetime());
+
+                        /** @var \Navindbhudiya\ProductRecommendation\Api\Data\LlmRankingInterface $ranking */
+                        $ranking = $this->llmRankingFactory->create();
+                        $ranking->setCustomerId($customerId)
+                            ->setProductId($productId)
+                            ->setRecommendationType($type)
+                            ->setStoreId($storeId)
+                            ->setRankedProductIds($rankedProductIds)
+                            ->setRankingMetadata([
+                                'generated_at' => gmdate('Y-m-d H:i:s'),
+                                'result_count' => count($results),
+                                'llm_enabled' => $this->config->isLlmRerankingEnabled($storeId)
+                            ])
+                            ->setExpiresAt($expiresAt);
+
+                        // Extract LLM metadata from results if available
+                        $metadata = $results[0]->getMetadata() ?? [];
+                        if (isset($metadata['llm_model'])) {
+                            $ranking->setModelUsed($metadata['llm_model']);
+                        }
+                        if (isset($metadata['llm_cost'])) {
+                            $ranking->setEstimatedCost((float)$metadata['llm_cost']);
+                        }
+
+                        $this->llmRankingRepository->save($ranking);
+
+                        $this->log('🗄️ [DATABASE SAVED] Persisted customer rankings', [
+                            'customer_id' => $customerId,
+                            'product_id' => $productId,
+                            'type' => $type,
+                            'ranking_count' => count($rankedProductIds),
+                            'expires_at' => $expiresAt,
+                            'model_used' => $ranking->getModelUsed(),
+                            'estimated_cost' => $ranking->getEstimatedCost(),
+                            'note' => 'Future visits will use database (no API cost!)'
+                        ]);
+                    } catch (\Exception $e) {
+                        $this->log('❌ Failed to save to database: ' . $e->getMessage());
+                    }
+                }
+
+                // LAYER 2: Save to CACHE (benefits both guests and logged-in users)
+                if ($this->config->isCacheEnabled()) {
+                    $cacheData = $this->dehydrateResults($results);
+                    $this->cache->save(
+                        $this->serializer->serialize($cacheData),
+                        $cacheKey,
+                        [RecommendationCache::CACHE_TAG],
+                        $this->config->getCacheLifetime()
+                    );
+                    $this->log('💾 [CACHE SAVED] Stored in cache', [
+                        'product_id' => $productId,
+                        'type' => $type,
+                        'cache_key' => $cacheKey,
+                        'result_count' => count($results),
+                        'cache_lifetime' => $this->config->getCacheLifetime() . ' seconds',
+                        'note' => $customerId ? 'Cache serves as fallback for database' : 'Cache serves guest users'
+                    ]);
+                }
             }
 
             return $results;
@@ -562,8 +705,20 @@ class RecommendationService implements RecommendationServiceInterface
             }
         }
 
+        // DIAGNOSTIC: Log before LLM re-ranking check
+        $this->log('🔍 [DIAGNOSTIC] Checking LLM re-ranking conditions', [
+            'has_llmReRanker' => $this->llmReRanker !== null,
+            'llmReRanker_class' => $this->llmReRanker ? get_class($this->llmReRanker) : 'NULL',
+            'is_llm_enabled' => $this->config->isLlmRerankingEnabled($storeId),
+            'has_results' => !empty($results),
+            'result_count' => count($results),
+            'store_id' => $storeId,
+            'recommendation_type' => $type
+        ]);
+
         // Apply LLM re-ranking if enabled
         if ($this->llmReRanker && $this->config->isLlmRerankingEnabled($storeId) && !empty($results)) {
+            $this->log('✅ [DIAGNOSTIC] All conditions met - Calling LLM re-ranking!');
             try {
                 $results = $this->llmReRanker->rerank(
                     $sourceProduct,
@@ -574,9 +729,15 @@ class RecommendationService implements RecommendationServiceInterface
                     $storeId
                 );
             } catch (\Exception $e) {
-                $this->log('LLM re-ranking failed, using vector similarity results: ' . $e->getMessage());
+                $this->log('❌ LLM re-ranking failed, using vector similarity results: ' . $e->getMessage());
                 // Continue with original results if re-ranking fails
             }
+        } else {
+            $this->log('⚠️  [DIAGNOSTIC] LLM re-ranking skipped - condition failed', [
+                'llmReRanker_is_null' => $this->llmReRanker === null,
+                'llm_enabled' => $this->config->isLlmRerankingEnabled($storeId),
+                'results_empty' => empty($results)
+            ]);
         }
 
         return $results;
@@ -821,6 +982,38 @@ class RecommendationService implements RecommendationServiceInterface
             $this->log('hydrateResults error: ' . $e->getMessage());
             return [];
         }
+    }
+
+    /**
+     * Hydrate results from product IDs (database storage)
+     *
+     * @param array $productIds
+     * @param string $type
+     * @param int $limit
+     * @return RecommendationResultInterface[]
+     */
+    private function hydrateFromProductIds(array $productIds, string $type, int $limit): array
+    {
+        if (empty($productIds)) {
+            return [];
+        }
+
+        // Limit to requested count
+        $productIds = array_slice($productIds, 0, $limit);
+
+        // Convert to cache format for reuse
+        $cachedData = [];
+        foreach ($productIds as $productId) {
+            $cachedData[] = [
+                'product_id' => $productId,
+                'score' => 0.0, // Score not stored in DB, only ranking order
+                'distance' => 0.0,
+                'type' => $type,
+                'metadata' => []
+            ];
+        }
+
+        return $this->hydrateResults($cachedData, $type, $limit);
     }
 
     /**

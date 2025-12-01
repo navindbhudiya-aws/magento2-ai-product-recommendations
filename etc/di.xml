@@ -37,6 +37,12 @@
     <preference for="Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface"
                 type="Navindbhudiya\ProductRecommendation\Model\PersonalizedRecommendationManagement"/>
 
+    <preference for="Navindbhudiya\ProductRecommendation\Api\Data\LlmRankingInterface"
+                type="Navindbhudiya\ProductRecommendation\Model\LlmRanking"/>
+
+    <preference for="Navindbhudiya\ProductRecommendation\Api\LlmRankingRepositoryInterface"
+                type="Navindbhudiya\ProductRecommendation\Model\LlmRankingRepository"/>
+
     <!-- Embedding Provider Pool -->
     <type name="Navindbhudiya\ProductRecommendation\Service\Embedding\EmbeddingProviderFactory">
         <arguments>
@@ -68,9 +74,11 @@
         </arguments>
     </type>
 
+    <!-- Core Recommendation Service with LLM Re-Ranking -->
     <type name="Navindbhudiya\ProductRecommendation\Service\RecommendationService">
         <arguments>
             <argument name="logger" xsi:type="object">Navindbhudiya\ProductRecommendation\Logger\Logger</argument>
+            <argument name="llmReRanker" xsi:type="object">Navindbhudiya\ProductRecommendation\Service\LlmReRanker</argument>
         </arguments>
     </type>
 
@@ -136,6 +144,38 @@
     </type>
 
     <type name="Navindbhudiya\ProductRecommendation\Cron\RefreshTrending">
+        <arguments>
+            <argument name="logger" xsi:type="object">Navindbhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <!-- LLM Re-Ranking Services -->
+
+    <type name="Navindbhudiya\ProductRecommendation\Service\LlmReRanker">
+        <arguments>
+            <argument name="logger" xsi:type="object">Navindbhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Navindbhudiya\ProductRecommendation\Service\Llm\ClaudeProvider">
+        <arguments>
+            <argument name="logger" xsi:type="object">Navindbhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Navindbhudiya\ProductRecommendation\Service\Llm\OpenAiProvider">
+        <arguments>
+            <argument name="logger" xsi:type="object">Navindbhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Navindbhudiya\ProductRecommendation\Service\ContextBuilder">
+        <arguments>
+            <argument name="logger" xsi:type="object">Navindbhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Navindbhudiya\ProductRecommendation\Model\LlmRankingRepository">
         <arguments>
             <argument name="logger" xsi:type="object">Navindbhudiya\ProductRecommendation\Logger\Logger</argument>
         </arguments>

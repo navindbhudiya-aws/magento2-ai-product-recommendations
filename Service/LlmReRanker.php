@@ -90,28 +90,62 @@ class LlmReRanker
         int $limit = 10,
         ?int $storeId = null
     ): array {
+        $this->log('🚀 LLM Re-Ranking Started', [
+            'source_product_id' => $sourceProduct->getId(),
+            'source_product_name' => $sourceProduct->getName(),
+            'candidate_count' => count($candidates),
+            'recommendation_type' => $recommendationType,
+            'customer_id' => $customerId,
+            'requested_limit' => $limit
+        ]);
+
         // Check if LLM re-ranking is enabled
         if (!$this->config->isLlmRerankingEnabled($storeId)) {
+            $this->log('⚠️  LLM re-ranking is DISABLED in configuration - using vector similarity only');
             return array_slice($candidates, 0, $limit);
         }
+
+        $this->log('✅ LLM re-ranking is ENABLED');
 
         // Get active provider
         $provider = $this->getActiveProvider();
         if (!$provider || !$provider->isAvailable()) {
-            $this->log('LLM provider not available, skipping re-ranking');
+            $this->log('❌ LLM provider not available, skipping re-ranking', [
+                'configured_provider' => $this->config->getLlmProvider($storeId),
+                'has_api_key' => !empty($this->config->getLlmApiKey($storeId))
+            ]);
             return array_slice($candidates, 0, $limit);
         }
+
+        $this->log('✅ LLM Provider Ready', [
+            'provider' => $provider->getProviderName(),
+            'model' => $provider->getModel()
+        ]);
 
         try {
             // Limit candidates to configured count
             $candidateCount = $this->config->getLlmCandidateCount($storeId);
             $candidatesToRerank = array_slice($candidates, 0, $candidateCount);
 
+            $this->log('📋 Prepared Candidates for Re-ranking', [
+                'total_candidates' => count($candidates),
+                'sending_to_llm' => count($candidatesToRerank),
+                'configured_limit' => $candidateCount
+            ]);
+
             if (empty($candidatesToRerank)) {
+                $this->log('⚠️  No candidates to re-rank, returning empty array');
                 return [];
             }
 
+            // Log candidate product IDs
+            $candidateIds = array_map(function($c) {
+                return $c->getProduct()->getId() . ':' . $c->getProduct()->getName();
+            }, $candidatesToRerank);
+            $this->log('📦 Candidate Products', ['products' => $candidateIds]);
+
             // Build prompt
+            $this->log('🔨 Building LLM prompt with context...');
             $prompt = $this->buildPrompt(
                 $sourceProduct,
                 $candidatesToRerank,
@@ -119,33 +153,86 @@ class LlmReRanker
                 $customerId
             );
 
-            $this->log('Sending re-ranking request to LLM', [
+            $this->log('✅ Prompt Built Successfully', [
+                'prompt_length' => strlen($prompt),
+                'estimated_tokens' => (int)(strlen($prompt) / 4)
+            ]);
+
+            $temperature = $this->config->getLlmTemperature($storeId);
+            $this->log('🌡️  LLM Configuration', [
+                'temperature' => $temperature,
+                'max_tokens' => 4096,
+                'candidate_count' => count($candidatesToRerank)
+            ]);
+
+            $this->log('📤 Sending request to LLM API...', [
                 'provider' => $provider->getProviderName(),
-                'candidates' => count($candidatesToRerank),
+                'model' => $provider->getModel()
             ]);
 
             // Send to LLM
             $response = $provider->sendPrompt($prompt, [
-                'temperature' => $this->config->getLlmTemperature($storeId),
+                'temperature' => $temperature,
                 'max_tokens' => 4096,
             ]);
 
-            // Parse response
-            $rankings = $this->parseResponse($response);
-
-            // Re-order candidates based on LLM ranking
-            $reranked = $this->applyRankings($candidatesToRerank, $rankings);
-
-            $this->log('Successfully re-ranked products', [
-                'original_count' => count($candidatesToRerank),
-                'reranked_count' => count($reranked),
+            $this->log('📥 Received response from LLM', [
+                'response_length' => strlen($response),
+                'response_preview' => substr($response, 0, 200) . '...'
             ]);
 
-            return array_slice($reranked, 0, $limit);
+            // Parse response
+            $this->log('🔍 Parsing LLM JSON response...');
+            $rankings = $this->parseResponse($response);
+
+            if (empty($rankings)) {
+                $this->log('⚠️  Failed to parse rankings, falling back to vector similarity order');
+                return array_slice($candidatesToRerank, 0, $limit);
+            }
+
+            $this->log('✅ Parsed Rankings Successfully', [
+                'ranking_count' => count($rankings),
+                'rankings' => array_map(function($r) {
+                    return [
+                        'product_id' => $r['product_id'] ?? 'unknown',
+                        'rank' => $r['rank'] ?? 'unknown',
+                        'reason' => substr($r['reason'] ?? '', 0, 100)
+                    ];
+                }, array_slice($rankings, 0, 5))
+            ]);
+
+            // Re-order candidates based on LLM ranking
+            $this->log('🔄 Applying LLM rankings to candidates...');
+            $reranked = $this->applyRankings($candidatesToRerank, $rankings);
+
+            $beforeOrder = array_map(function($c) { return $c->getProduct()->getId(); }, $candidatesToRerank);
+            $afterOrder = array_map(function($c) { return $c->getProduct()->getId(); }, $reranked);
+
+            $this->log('✅ Successfully re-ranked products', [
+                'original_count' => count($candidatesToRerank),
+                'reranked_count' => count($reranked),
+                'order_changed' => $beforeOrder !== $afterOrder,
+                'before_order' => array_slice($beforeOrder, 0, 5),
+                'after_order' => array_slice($afterOrder, 0, 5)
+            ]);
+
+            $finalResults = array_slice($reranked, 0, $limit);
+            $this->log('🎯 Final Results', [
+                'returned_count' => count($finalResults),
+                'product_ids' => array_map(function($c) { return $c->getProduct()->getId(); }, $finalResults)
+            ]);
+
+            return $finalResults;
 
         } catch (\Exception $e) {
-            $this->logger->error('[ProductRecommendation] LLM re-ranking failed: ' . $e->getMessage());
+            $this->log('❌ LLM re-ranking FAILED with exception', [
+                'error' => $e->getMessage(),
+                'trace' => substr($e->getTraceAsString(), 0, 500)
+            ]);
+            $this->logger->error('[ProductRecommendation][LlmReRanker] Exception: ' . $e->getMessage());
+
             // Fall back to original ranking
+            $this->log('🔙 Falling back to vector similarity ranking');
             return array_slice($candidates, 0, $limit);
         }
     }

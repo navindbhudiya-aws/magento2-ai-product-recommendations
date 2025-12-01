@@ -9,7 +9,7 @@
 
 ### 1. Core Infrastructure (100%)
 - ✅ **LLM Provider Interface** (`Api/LlmProviderInterface.php`)
-- ✅ **Claude Provider** (`Service/Llm/ClaudeProvider.php`)
+- ✅ **Claude Provider** (`Service/Llm/ClaudeProvider.php`) - Supports Claude Sonnet 4.5, Opus 4.5, Opus 4.1
 - ✅ **OpenAI Provider** (`Service/Llm/OpenAiProvider.php`)
 
 ### 2. AI Services (100%)
@@ -175,8 +175,10 @@ tail -f var/log/product_recommendation.log
 
 ## 💰 COST ESTIMATION
 
-### Claude Pricing:
-- Claude 3.5 Sonnet: $3 / million input tokens, $15 / million output tokens
+### Claude Pricing (Latest Models):
+- Claude Sonnet 4.5 (Default): $3 / million input tokens, $15 / million output tokens
+- Claude Opus 4.5: Higher quality, slightly higher cost
+- Claude Opus 4.1: Premium tier
 - Average prompt: ~1,500 tokens
 - Average response: ~500 tokens
 - **Cost per re-rank: ~$0.012** (1.2 cents)

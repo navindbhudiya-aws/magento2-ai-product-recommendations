@@ -10,6 +10,8 @@ namespace Navindbhudiya\ProductRecommendation\Block\Personalized;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Block\Product\AbstractProduct;
 use Magento\Catalog\Block\Product\Context;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Pricing\Price\SpecialPriceBulkResolverInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Data\Helper\PostHelper;
@@ -73,6 +75,16 @@ class Recommendations extends AbstractProduct
     private ?array $specialPriceMap = null;
 
     /**
+     * @var CollectionFactory
+     */
+    private CollectionFactory $productCollectionFactory;
+
+    /**
+     * @var ProductCollection|null
+     */
+    private ?ProductCollection $productCollection = null;
+
+    /**
      * @param Context $context
      * @param PersonalizedRecommendationInterface $recommendationService
      * @param CustomerSession $customerSession
@@ -80,6 +92,7 @@ class Recommendations extends AbstractProduct
      * @param PostHelper $postHelper
      * @param UrlEncoder $urlEncoder
      * @param SpecialPriceBulkResolverInterface $specialPriceBulkResolver
+     * @param CollectionFactory $productCollectionFactory
      * @param array $data
      */
     public function __construct(
@@ -90,6 +103,7 @@ class Recommendations extends AbstractProduct
         PostHelper $postHelper,
         UrlEncoder $urlEncoder,
         SpecialPriceBulkResolverInterface $specialPriceBulkResolver,
+        CollectionFactory $productCollectionFactory,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -99,6 +113,7 @@ class Recommendations extends AbstractProduct
         $this->postHelper = $postHelper;
         $this->urlEncoder = $urlEncoder;
         $this->specialPriceBulkResolver = $specialPriceBulkResolver;
+        $this->productCollectionFactory = $productCollectionFactory;
     }
 
     /**
@@ -349,35 +364,58 @@ class Recommendations extends AbstractProduct
     }
 
     /**
+     * Get loaded product collection
+     * Converts product array to collection for compatibility with Magento's special price resolver
+     *
+     * @return ProductCollection
+     */
+    public function getLoadedProductCollection(): ProductCollection
+    {
+        if ($this->productCollection !== null) {
+            return $this->productCollection;
+        }
+
+        $products = $this->getProducts();
+        $this->productCollection = $this->productCollectionFactory->create();
+
+        if (!empty($products)) {
+            $productIds = array_map(function ($product) {
+                return $product->getId();
+            }, $products);
+
+            $this->productCollection->addIdFilter($productIds);
+            $this->productCollection->addStoreFilter($this->_storeManager->getStore()->getId());
+
+            // Add all necessary attributes for configurable products
+            $this->productCollection->addAttributeToSelect('*');
+            $this->productCollection->addMinimalPrice();
+            $this->productCollection->addFinalPrice();
+            $this->productCollection->addTaxPercents();
+
+            // Maintain original order from recommendation service
+            $this->productCollection->getSelect()->order(
+                new \Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $productIds) . ')')
+            );
+
+            // Explicitly load the collection
+            $this->productCollection->load();
+        }
+
+        return $this->productCollection;
+    }
+
+    /**
      * Get price render block
-     * Uses Magento's native special price map generation for configurable products
+     * Don't mark as product list to avoid special price map issues with configurable products
      *
      * @return \Magento\Framework\Pricing\Render|false
      */
     protected function getPriceRender()
     {
-        $priceRender = $this->getLayout()->getBlock('product.price.render.default');
-
-        if (!$priceRender) {
-            return parent::getPriceRender();
-        }
-
-        $priceRender->setData('is_product_list', true);
-
-        // Generate special price map using Magento's native service
-        if ($this->specialPriceMap === null) {
-            $products = $this->getProducts();
-            if (!empty($products)) {
-                $this->specialPriceMap = $this->specialPriceBulkResolver->generateSpecialPriceMap(
-                    (int) $this->_storeManager->getStore()->getId(),
-                    $products
-                );
-            } else {
-                $this->specialPriceMap = [];
-            }
-        }
-
-        return $priceRender->setData('special_price_map', $this->specialPriceMap);
+        // Use parent implementation which doesn't set is_product_list
+        // This ensures each product price is calculated individually
+        // avoiding "Undefined array key" errors with special_price_map
+        return parent::getPriceRender();
     }
 
     /**
