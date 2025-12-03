@@ -675,11 +675,15 @@ class PersonalizedRecommendationService implements PersonalizedRecommendationInt
             // Build where filter
             $where = ['store_id' => $storeId];
 
+            // Request significantly more results to account for filtering
+            // Multiply by 3 to ensure we get enough after excluding browsed products
+            $requestLimit = max($limit * 3, $limit + count($excludeProductIds) * 2);
+
             // Query ChromaDB
             $queryResult = $this->chromaClient->query(
                 $collectionId,
                 [],
-                $limit + count($excludeProductIds),
+                $requestLimit,
                 $where,
                 [],
                 [$embedding]
@@ -693,8 +697,14 @@ class PersonalizedRecommendationService implements PersonalizedRecommendationInt
             foreach ($queryResult['ids'][0] as $id) {
                 if (preg_match('/^product_(\d+)(?:_\d+)?$/', $id, $matches)) {
                     $productId = (int) $matches[1];
+                    // Strict exclusion check - never include products from exclude list
                     if (!in_array($productId, $excludeProductIds, true)) {
                         $productIds[] = $productId;
+
+                        // Stop once we have enough results
+                        if (count($productIds) >= $limit) {
+                            break;
+                        }
                     }
                 }
             }
