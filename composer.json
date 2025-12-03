@@ -21,13 +21,13 @@
     "type": "magento2-module",
     "version": "2.1.0",
     "license": "MIT",
-    "homepage": "https://github.com/navindbhudiya/magento2-product-recommendation",
+    "homepage": "https://github.com/navindbhudiya-aws/magento2-ai-product-recommendations",
     "authors": [
         {
             "name": "Navin Bhudiya",
             "email": "navindbhudiya@gmail.com",
             "role": "Magento 4x Certified | AWS 2x Certified | Cloud Solutions Architect | Transforming E-commerce with Cloud Innovation",
-            "homepage": "https://github.com/navindbhudiya"
+            "homepage": "https://github.com/navindbhudiya-aws"
         }
     ],
     "require": {

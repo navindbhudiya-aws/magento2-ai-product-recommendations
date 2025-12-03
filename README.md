@@ -127,7 +127,7 @@ php bin/magento cache:flush
 
 ```bash
 # Clone the repository
-git clone https://github.com/navindbhudiya/magento2-product-recommendation.git
+git clone https://github.com/navindbhudiya-aws/magento2-ai-product-recommendations.git
 
 # Navigate to docker directory
 cd magento2-product-recommendation/docker
@@ -658,7 +658,7 @@ This module is licensed under the MIT License. See [LICENSE](LICENSE) file for d
 
 **Navin Bhudiya**
 - Email: navindbhudiya@gmail.com
-- GitHub: [@navindbhudiya](https://github.com/navindbhudiya)
+- GitHub: [@navindbhudiya](https://github.com/navindbhudiya-aws)
 - Magento Certified: 4x
 - AWS Certified: 2x
 
@@ -675,8 +675,8 @@ This module is licensed under the MIT License. See [LICENSE](LICENSE) file for d
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/navindbhudiya/magento2-product-recommendation/issues)
-- **Documentation**: [Wiki](https://github.com/navindbhudiya/magento2-product-recommendation/wiki)
+- **Issues**: [GitHub Issues](https://github.com/navindbhudiya-aws/magento2-ai-product-recommendations/issues)
+- **Documentation**: [Wiki](https://github.com/navindbhudiya-aws/magento2-ai-product-recommendations/wiki)
 - **Email**: navindbhudiya@gmail.com
 
 ---

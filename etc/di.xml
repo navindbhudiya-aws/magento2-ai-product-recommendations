@@ -187,9 +187,7 @@
             <argument name="commands" xsi:type="array">
                 <item name="recommendation_index" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\IndexProducts</item>
                 <item name="recommendation_test" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\TestConnection</item>
-                <item name="recommendation_similar" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\GetSimilarProducts</item>
                 <item name="recommendation_clear" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\ClearCollection</item>
-                <item name="recommendation_personalized" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\GetPersonalizedRecommendations</item>
                 <item name="recommendation_refresh_profiles" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\RefreshProfiles</item>
                 <item name="recommendation_refresh_trending" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\RefreshTrending</item>
             </argument>
