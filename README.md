@@ -1,637 +1,692 @@
-# AI Product Recommendation for Magento 2
+# Magento 2 AI-Powered Product Recommendation Module
 
-Intelligent product recommendations powered by AI vector embeddings and ChromaDB. This module uses semantic similarity to automatically suggest related, cross-sell, and up-sell products based on product descriptions, attributes, and categories.
+[![Magento 2](https://img.shields.io/badge/Magento-2.4.6+-orange.svg)](https://magento.com/)
+[![PHP](https://img.shields.io/badge/PHP-8.1+-blue.svg)](https://php.net/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## Key Features
+An advanced AI-powered product recommendation system for Magento 2 that uses ChromaDB vector database and Large Language Models (LLMs) to provide intelligent, personalized product suggestions.
 
-- **AI-Powered Recommendations**: Uses vector embeddings (all-MiniLM-L6-v2) to find semantically similar products
-- **ChromaDB v0.4.24 Integration**: Fast vector similarity search with persistent storage
-- **Embedding Service**: Python-based embedding service using sentence-transformers
-- **Automatic Product Indexing**: Products are automatically indexed when saved or via cron
-- **Smart Caching**: Recommendations are cached for optimal performance
-- **Fully Configurable**: Complete admin interface for all settings
-- **CLI Tools**: Command-line tools for testing, indexing, and debugging
-- **Fallback Support**: Falls back to native Magento recommendations if AI is unavailable
-- **Multiple Recommendation Types**: Related Products, Cross-sell, Up-sell
+---
 
-## Requirements
+## 📋 Table of Contents
 
-- **Magento**: 2.4.x (Community Edition)
-- **PHP**: 8.1 or higher
-- **ChromaDB**: v0.4.24 or higher
-- **Embedding Service**: Python service with sentence-transformers
-- **Composer**: For PHP dependencies
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Module Architecture](#module-architecture)
+- [Usage](#usage)
+- [CLI Commands](#cli-commands)
+- [API Endpoints](#api-endpoints)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
 
-## Installation
+---
 
-### 1. Install ChromaDB
+## ✨ Features
 
-ChromaDB is the vector database that powers the AI recommendations. Visit [https://www.trychroma.com/](https://www.trychroma.com/) for official documentation.
+### Core Capabilities
+- **AI-Powered Recommendations**: Uses vector embeddings and semantic similarity for intelligent product matching
+- **Multi-LLM Support**: Integrates with Claude (Anthropic) and OpenAI for advanced ranking
+- **ChromaDB Integration**: Leverages vector database for fast, scalable similarity searches
+- **Personalization**: Tracks customer behavior (views, purchases, wishlist) for tailored recommendations
+- **Real-time Updates**: Automatic indexing on product save/delete with event-driven architecture
+- **Multiple Recommendation Types**:
+    - Related Products (semantic similarity)
+    - Cross-sell (complementary products)
+    - Up-sell (premium alternatives)
+    - Personalized recommendations (behavior-based)
+    - Trending products (popularity-based)
+
+### Technical Features
+- **Caching Layer**: Intelligent caching with configurable TTL
+- **Circuit Breaker**: Fault-tolerant external API calls
+- **Diversity Filtering**: Prevents redundant recommendations
+- **GraphQL Support**: Complete GraphQL API for headless commerce
+- **REST API**: Full REST API with WebAPI support
+- **CLI Management**: Comprehensive command-line tools
+- **Widget Support**: Easy CMS page integration
+- **Hyva Theme Compatible**: Ready for Hyva-based stores
+- **Admin Interface**: Full configuration UI in Magento Admin
+- **Indexer Integration**: Magento indexer support for embeddings
+- **Cron Jobs**: Automated data sync and refresh
+
+---
+
+## 📦 Requirements
+
+### System Requirements
+- **Magento**: 2.4.6+ (2.4.7 or 2.4.8 recommended)
+- **PHP**: 8.1+ (8.2 or 8.3 recommended)
+- **MySQL/MariaDB**: 8.0+ / 10.4+
+- **Elasticsearch/OpenSearch**: 7.x+ / 1.x+
+- **ChromaDB Server**: Latest version
+- **Memory**: Minimum 2GB PHP memory_limit
+
+### PHP Extensions
+- `json`
+- `curl`
+- `openssl`
+- `gd` or `imagick`
+
+### External Services
+- **ChromaDB**: Vector database (can be self-hosted or cloud)
+- **LLM Provider** (optional): Claude AI or OpenAI API access
+
+---
+
+## 🚀 Installation
+
+### Method 1: Composer (Recommended)
 
 ```bash
-# Install ChromaDB
-pip install chromadb
+# Navigate to Magento root
+cd /path/to/magento2
 
-# Run ChromaDB server
-chroma run --host 0.0.0.0 --port 8000
-```
+# Require the module
+composer require navindbhudiya/module-product-recommendation
 
-For more installation options and configuration, visit the [ChromaDB documentation](https://docs.trychroma.com/getting-started).
+# Enable the module
+php bin/magento module:enable NavinDBhudiya_ProductRecommendation
 
-### 2. Install Embedding Service
+# Run setup upgrade
+php bin/magento setup:upgrade
 
-The embedding service generates vector embeddings from product text using the sentence-transformers library.
+# Compile DI
+php bin/magento setup:di:compile
 
-```bash
-# Install dependencies
-pip install flask sentence-transformers
+# Deploy static content (production mode)
+php bin/magento setup:static-content:deploy -f
 
-# Run the embedding service
-# The service should run on port 8001 and provide an /embed endpoint
-```
-
-### 3. Copy Module Files
-
-```bash
-# Copy module to Magento app/code directory
-mkdir -p app/code/NavinDBhudiya/ProductRecommendation
-cp -r path/to/module/* app/code/NavinDBhudiya/ProductRecommendation/
-```
-
-### 4. Enable Module
-
-```bash
-# Enable module
-bin/magento module:enable NavinDBhudiya_ProductRecommendation
-
-# Run setup
-bin/magento setup:upgrade
-bin/magento setup:di:compile
-bin/magento setup:static-content:deploy -f
+# Reindex
+php bin/magento indexer:reindex
 
 # Clear cache
-bin/magento cache:flush
+php bin/magento cache:flush
 ```
 
-### 5. Verify Installation
+### Method 2: Manual Installation
 
 ```bash
-# Test connections
-bin/magento recommendation:test
+# Create module directory
+mkdir -p app/code/NavinDBhudiya/ProductRecommendation
 
-# You should see:
-# ✓ ChromaDB connection successful
-# ✓ Embedding provider available
-# ✓ Generated embedding with 384 dimensions
+# Extract/copy module files to:
+# app/code/NavinDBhudiya/ProductRecommendation/
+
+# Enable and setup (same as above)
+php bin/magento module:enable NavinDBhudiya_ProductRecommendation
+php bin/magento setup:upgrade
+php bin/magento setup:di:compile
+php bin/magento setup:static-content:deploy -f
+php bin/magento cache:flush
 ```
 
-## Configuration
-
-Navigate to: **Stores → Configuration → NavinDBhudiya → AI Product Recommendation**
-
-### General Settings
-- **Enable Module**: Turn recommendations on/off
-- **Debug Mode**: Enable detailed logging for troubleshooting
-
-### ChromaDB Configuration
-- **ChromaDB Host**: Hostname (default: `chromadb`)
-- **ChromaDB Port**: Port number (default: `8000`)
-- **Collection Name**: Collection for embeddings (default: `magento_products`)
-
-### Embedding Configuration
-- **Embedding Provider**: ChromaDB with all-MiniLM-L6-v2 (384 dimensions)
-- **Product Attributes**: Attributes to include in embeddings (name, description, etc.)
-- **Include Categories**: Include category names in product text
-
-### Recommendation Settings
-- **Enable AI Related Products**: Use AI for related products
-- **Enable AI Cross-sell Products**: Use AI for cross-sell
-- **Enable AI Up-sell Products**: Use AI for up-sell
-- **Product Counts**: Number of recommendations per type
-- **Similarity Threshold**: Minimum similarity score (0.0 - 1.0)
-- **Price Threshold**: For up-sell, minimum price increase percentage
-
-### Cache Settings
-- **Enable Cache**: Cache recommendations for better performance
-- **Cache Lifetime**: How long to cache (default: 3600 seconds)
-
-## Usage
-
-### Indexing Products
-
-**Manual Indexing:**
-```bash
-bin/magento recommendation:index
-```
-
-**Automatic Indexing:**
-Products are automatically indexed when:
-- A product is saved in the admin
-- The cron job runs (configurable schedule)
-
-### Testing and Debugging
-
-**Test Connection:**
-```bash
-bin/magento recommendation:test
-```
-
-**Get Similar Products:**
-```bash
-# By product ID
-bin/magento recommendation:similar 123
-
-# By text query
-bin/magento recommendation:similar --query "red dress cotton"
-```
-
-**Clear Collection:**
-```bash
-# Clear all embeddings (requires confirmation)
-bin/magento recommendation:clear
-
-# Force clear without confirmation
-bin/magento recommendation:clear --force
-```
-
-### CLI Commands Summary
-
-| Command | Description |
-|---------|-------------|
-| `recommendation:test` | Test ChromaDB and embedding service connections |
-| `recommendation:index` | Index all products |
-| `recommendation:similar <id>` | Get similar products by ID |
-| `recommendation:similar --query "text"` | Get similar products by text query |
-| `recommendation:clear` | Clear all product embeddings |
-
-## How It Works
-
-```
-┌─────────────────┐     ┌──────────────────┐     ┌───────────┐
-│ Product Save    │────▶│ Embedding Service │────▶│ ChromaDB  │
-│ or Indexer      │     │ (port 8001)       │     │ (port 8000│
-└─────────────────┘     └──────────────────┘     └───────────┘
-                              │                        │
-                              ▼                        │
-                        Generate vector          Store vector
-                        (384 dimensions)         with metadata
-
-┌─────────────────┐     ┌──────────────────┐     ┌───────────┐
-│ Product Page    │────▶│ Embedding Service │────▶│ ChromaDB  │
-│ (get related)   │     │ Generate query    │     │ Find      │
-└─────────────────┘     │ embedding         │     │ similar   │
-                        └──────────────────┘     └───────────┘
-                                                       │
-                              ┌─────────────────────────┘
-                              ▼
-                        Return product IDs
-                        with similarity scores
-```
-
-## Architecture
-
-### Components
-
-1. **ChromaDB (v0.4.24)**: Vector database for storing and querying product embeddings
-2. **Embedding Service**: Python Flask service that generates embeddings using all-MiniLM-L6-v2
-3. **ChromaClient**: PHP client for communicating with ChromaDB REST API
-4. **RecommendationService**: Core service for generating recommendations
-5. **Product Indexer**: Indexes products and generates embeddings
-6. **Plugin System**: Integrates with Magento's product listing blocks
-
-### Embedding Model
-
-- **Model**: all-MiniLM-L6-v2 (sentence-transformers)
-- **Dimensions**: 384
-- **Performance**: ~14k sentences/second on CPU
-- **Size**: ~80MB
-- **Quality**: Balanced trade-off between speed and accuracy
-
-## Troubleshooting
-
-### "Embedding service not available"
-
-**Test embedding service:**
-```bash
-curl -X POST http://your-embedding-service:8001/embed \
-  -H "Content-Type: application/json" \
-  -d '{"texts": ["test product"]}'
-```
-
-Check your embedding service configuration in the admin panel.
-
-### "ChromaDB connection failed"
-
-**Test ChromaDB connection:**
-```bash
-curl http://your-chromadb-host:8000/api/v1/heartbeat
-```
-
-Verify ChromaDB host and port in **Stores > Configuration > NavinDBhudiya > AI Product Recommendation > ChromaDB Configuration**.
-
-### "422 Error from ChromaDB"
-
-This means the code is trying to use `query_texts` without embeddings. Run the test command:
-```bash
-bin/magento recommendation:test
-```
-
-### Empty Recommendations
-
-**Verify products are indexed:**
-```bash
-bin/magento recommendation:test
-# Check "Documents indexed" count
-```
-
-**Enable debug mode and check logs:**
-```bash
-bin/magento config:set product_recommendation/general/debug_mode 1
-tail -f var/log/product_recommendation.log
-```
-
-**Reindex products:**
-```bash
-bin/magento recommendation:clear --force
-bin/magento recommendation:index
-```
-
-### Slow Indexing
-
-The embedding service processes products sequentially. For large catalogs:
-- Run indexing during off-peak hours or maintenance windows
-- Use the indexer with cron scheduling
-- Consider indexing in batches via CLI
-
-## Performance Optimization
-
-1. **Enable Caching**: Set cache lifetime to 3600+ seconds
-2. **Adjust Similarity Threshold**: Higher threshold = fewer but more relevant results
-3. **Limit Product Counts**: Lower counts = faster response times
-4. **Use Indexes**: Ensure database indexes are optimized
-5. **Monitor ChromaDB**: Check ChromaDB memory usage and performance
-
-## Development
-
-### Complete Module Structure
-
-```
-app/code/NavinDBhudiya/ProductRecommendation/
-│
-├── Api/                                          # Service Contracts & Interfaces
-│   ├── Data/
-│   │   ├── CustomerProfileInterface.php          # Customer profile data interface
-│   │   ├── ProductEmbeddingInterface.php         # Product embedding data interface
-│   │   └── RecommendationResultInterface.php     # Recommendation result interface
-│   ├── BehaviorCollectorInterface.php            # Behavior collection contract
-│   ├── ChromaClientInterface.php                 # ChromaDB client contract
-│   ├── EmbeddingProviderInterface.php            # Embedding provider contract
-│   ├── PersonalizedRecommendationInterface.php   # Personalized recommendations contract
-│   ├── PersonalizedRecommendationManagementInterface.php  # Management interface
-│   ├── ProductEmbeddingRepositoryInterface.php   # Product embedding repository contract
-│   └── RecommendationServiceInterface.php        # Recommendation service contract
-│
-├── Block/                                        # UI Blocks
-│   ├── Adminhtml/
-│   │   └── System/Config/
-│   │       └── TestConnection.php                # Admin test connection button
-│   ├── Personalized/
-│   │   └── Recommendations.php                   # Personalized recommendations block
-│   └── Widget/
-│       ├── PersonalizedProducts.php              # Widget for personalized products
-│       └── PersonalizedRecommendations.php       # Personalized recommendations widget
-│
-├── Console/Command/                              # CLI Commands
-│   ├── ClearCollection.php                       # Clear ChromaDB collection
-│   ├── GetPersonalizedRecommendations.php        # Get personalized recommendations CLI
-│   ├── GetSimilarProducts.php                    # Get similar products CLI
-│   ├── IndexProducts.php                         # Index all products
-│   ├── RefreshProfiles.php                       # Refresh customer profiles
-│   └── TestConnection.php                        # Test connections CLI
-│
-├── Controller/                                   # Controllers
-│   ├── Adminhtml/System/Config/
-│   │   └── TestConnection.php                    # Admin test connection controller
-│   └── Ajax/
-│       └── Personalized.php                      # AJAX personalized recommendations
-│
-├── Cron/                                        # Cron Jobs
-│   ├── CleanCache.php                            # Clean expired cache entries
-│   ├── RefreshCustomerProfiles.php               # Refresh stale customer profiles
-│   └── SyncEmbeddings.php                        # Sync product embeddings
-│
-├── Helper/                                      # Helpers
-│   └── Config.php                                # Configuration helper
-│
-├── Model/                                       # Models & Data Objects
-│   ├── Cache/Type/
-│   │   └── Recommendation.php                    # Custom cache type
-│   ├── Config/Source/
-│   │   ├── EmbeddingProvider.php                 # Embedding provider dropdown
-│   │   └── ProductAttributes.php                 # Product attributes dropdown
-│   ├── Data/
-│   │   ├── CustomerProfile.php                   # Customer profile data model
-│   │   ├── ProductEmbedding.php                  # Product embedding data model
-│   │   └── RecommendationResult.php              # Recommendation result data model
-│   ├── Indexer/
-│   │   └── ProductEmbedding.php                  # Product embedding indexer
-│   ├── ResourceModel/
-│   │   └── CustomerProfile/
-│   │       ├── Collection.php                    # Customer profile collection
-│   │       └── CustomerProfile.php               # Customer profile resource model
-│   ├── PersonalizedRecommendationManagement.php  # Personalized recommendation management
-│   └── Resolver/
-│       └── PersonalizedRecommendations.php       # GraphQL resolver
-│
-├── Observer/                                    # Event Observers
-│   ├── CustomerLoginRefresh.php                  # Refresh profile on customer login
-│   ├── ProductDeleteBefore.php                   # Handle product deletion
-│   ├── ProductMassUpdate.php                     # Handle mass product updates
-│   ├── ProductSaveAfter.php                      # Index product after save
-│   └── ProductViewTracker.php                    # Track product views
-│
-├── Plugin/                                      # Plugins (Interceptors)
-│   ├── Checkout/
-│   │   └── CrosssellProducts.php                 # Override cross-sell products
-│   └── Product/
-│       ├── RelatedProducts.php                   # Override related products
-│       └── UpsellProducts.php                    # Override up-sell products
-│
-├── Service/                                     # Core Business Logic
-│   ├── BehaviorCollector/
-│   │   ├── BrowsingHistoryCollector.php          # Collect browsing history
-│   │   ├── PurchaseHistoryCollector.php          # Collect purchase history
-│   │   └── WishlistCollector.php                 # Collect wishlist data
-│   ├── Embedding/
-│   │   ├── ChromaDBEmbeddingProvider.php         # ChromaDB embedding provider
-│   │   └── EmbeddingProviderFactory.php          # Embedding provider factory
-│   ├── ChromaClient.php                          # ChromaDB HTTP client
-│   ├── PersonalizedRecommendationService.php     # Personalized recommendation service
-│   ├── ProductTextBuilder.php                    # Build product text for embeddings
-│   └── RecommendationService.php                 # Main recommendation service
-│
-├── Setup/                                       # Database Setup (deprecated location)
-│
-├── docs/                                        # Documentation
-│   └── LOCAL_INSTALLATION.md                     # Detailed installation guide
-│
-├── etc/                                         # Module Configuration
-│   ├── adminhtml/
-│   │   ├── routes.xml                            # Admin routes
-│   │   └── system.xml                            # Admin configuration structure
-│   ├── frontend/
-│   │   ├── di.xml                                # Frontend dependency injection
-│   │   ├── events.xml                            # Frontend events
-│   │   └── routes.xml                            # Frontend routes
-│   ├── acl.xml                                   # ACL permissions
-│   ├── cache.xml                                 # Cache type definition
-│   ├── config.xml                                # Default configuration values
-│   ├── crontab.xml                               # Cron job schedule
-│   ├── db_schema.xml                             # Database schema
-│   ├── di.xml                                    # Dependency injection
-│   ├── events.xml                                # Event observers
-│   ├── graphql/                                  # GraphQL schema (if present)
-│   ├── indexer.xml                               # Indexer configuration
-│   ├── module.xml                                # Module declaration
-│   ├── mview.xml                                 # Materialized view
-│   ├── webapi.xml                                # REST API definitions
-│   └── widget.xml                                # Widget definitions
-│
-├── view/                                        # Templates, Layouts & Assets
-│   ├── adminhtml/
-│   │   └── templates/system/config/
-│   │       └── test_connection.phtml             # Test connection template
-│   └── frontend/
-│       ├── layout/
-│       │   ├── cms_index_index.xml               # Homepage layout
-│       │   ├── customer_account_index.xml        # Customer account layout
-│       │   └── default.xml                       # Default layout
-│       ├── templates/personalized/
-│       │   ├── hyva/
-│       │   │   └── recommendations.phtml         # Hyva theme template
-│       │   ├── recommendations.phtml             # Personalized recommendations
-│       │   └── slider.phtml                      # Slider template
-│       ├── web/
-│       │   ├── css/
-│       │   │   └── personalized.css              # Personalized CSS styles
-│       │   └── js/
-│       │       └── personalized-slider.js        # Slider JavaScript
-│       └── requirejs-config.js                   # RequireJS configuration
-│
-├── .gitignore                                   # Git ignore rules
-├── CLAUDE.md                                    # AI assistant context file
-├── LICENSE.txt                                  # Module license
-├── README.md                                    # This file
-├── composer.json                                # Composer dependencies
-└── registration.php                             # Module registration
-```
-
-### Key Files Explained
-
-#### Core Services
-- **`Service/ChromaClient.php`**
-  HTTP client for ChromaDB REST API (v0.4.x and v0.5.x compatible). Handles all vector database operations.
-
-- **`Service/RecommendationService.php`**
-  Main recommendation logic. Uses query embeddings (NOT query_texts) to find similar products.
-
-- **`Service/PersonalizedRecommendationService.php`**
-  Generates personalized recommendations based on customer behavior profiles.
-
-- **`Service/ProductTextBuilder.php`**
-  Extracts and builds text from product attributes for embedding generation.
-
-#### Embedding Providers
-- **`Service/Embedding/ChromaDBEmbeddingProvider.php`**
-  Calls embedding-service to generate vectors using sentence-transformers.
-
-- **`Service/Embedding/EmbeddingProviderFactory.php`**
-  Factory for creating embedding provider instances.
-
-#### Behavior Collectors
-- **`Service/BehaviorCollector/BrowsingHistoryCollector.php`**
-  Collects customer browsing history from `report_viewed_product_index`.
-
-- **`Service/BehaviorCollector/PurchaseHistoryCollector.php`**
-  Collects purchase history from `sales_order_item`.
-
-- **`Service/BehaviorCollector/WishlistCollector.php`**
-  Collects wishlist items from `wishlist_item`.
-
-#### Indexing & Data
-- **`Model/Indexer/ProductEmbedding.php`**
-  Indexes products and generates embeddings. Triggered on product save or via CLI.
-
-- **`Model/ResourceModel/CustomerProfile.php`**
-  Customer profile resource model for database operations.
-
-#### Plugins
-- **`Plugin/Product/RelatedProducts.php`**
-  Intercepts related product loading to inject AI recommendations.
-
-- **`Plugin/Product/UpsellProducts.php`**
-  Intercepts up-sell product loading to inject AI recommendations.
-
-- **`Plugin/Checkout/CrosssellProducts.php`**
-  Intercepts cross-sell product loading to inject AI recommendations.
-
-#### CLI Commands
-All CLI commands are in `Console/Command/`:
-- `TestConnection.php` - Test ChromaDB and embedding service
-- `IndexProducts.php` - Index all products
-- `GetSimilarProducts.php` - Get similar products by ID or query
-- `ClearCollection.php` - Clear all embeddings
-- `GetPersonalizedRecommendations.php` - Get personalized recommendations
-- `RefreshProfiles.php` - Refresh customer profiles
-
-#### Configuration
-- **`etc/di.xml`** - Dependency injection configuration
-- **`etc/config.xml`** - Default module configuration values
-- **`etc/adminhtml/system.xml`** - Admin configuration structure
-- **`etc/webapi.xml`** - REST API endpoint definitions
-- **`etc/db_schema.xml`** - Database table definitions
-
-## Technical Details
-
-### ChromaDB Version Compatibility
-
-The module automatically detects ChromaDB version and uses the appropriate API:
-- **v0.4.x**: Legacy API (`api/v1/collections`)
-- **v0.5.x+**: Multi-tenant API (`api/v1/tenants/.../databases/.../collections`)
-
-Currently configured for: **v0.4.24**
-
-### Embedding Generation
-
-1. Product text is built from configurable attributes
-2. Text is sent to embedding-service (Python + sentence-transformers)
-3. Embedding service returns 384-dimensional vector
-4. Vector is stored in ChromaDB with product metadata
-5. Similarity search uses L2 distance to find similar products
-
-### Caching Strategy
-
-- Recommendations are cached per product ID, type, and store
-- Cache is cleared when products are updated
-- Cache lifetime is configurable (default: 1 hour)
-- Uses Magento's cache system
-
-## Support
-
-For issues, questions, or contributions:
-- Check the `CLAUDE.md` file for detailed technical documentation
-- Review `docs/LOCAL_INSTALLATION.md` for detailed setup instructions
-- Enable debug mode and check logs at `var/log/product_recommendation.log`
-
-## Personalized Recommendations (v2.0.0)
-
-### Overview
-
-Version 2.0.0 introduces **AI-powered personalized recommendations** based on customer behavior. The module now tracks and analyzes:
-
-- **Browsing History**: Products the customer has viewed
-- **Purchase History**: Products the customer has bought
-- **Wishlist**: Products saved to wishlist
-
-### New Recommendation Types
-
-| Type | Description | Data Source | Guest Support |
-|------|-------------|-------------|---------------|
-| **Inspired by Browsing** | Products similar to what customer has viewed | `report_viewed_product_index` + session | ✅ Yes |
-| **Based on Past Purchases** | Complementary products to purchases | `sales_order_item` | ❌ No |
-| **Inspired by Wishlist** | Products similar to wishlist items | `wishlist_item` | ❌ No |
-| **Just For You** | Combined weighted recommendations | All sources | Partial |
-
-### How It Works
-
-1. **Behavior Collection**: Customer actions (views, purchases, wishlist adds) are tracked
-2. **Profile Generation**: Product embeddings are averaged to create a customer profile vector
-3. **Similarity Search**: ChromaDB finds products similar to the customer profile
-4. **Weighted Scoring**: "Just For You" combines all behavior with configurable weights:
-   - Wishlist: 40% (highest purchase intent)
-   - Purchases: 35% (proven preferences)
-   - Browsing: 25% (interest exploration)
-
-### CLI Commands
+### Method 3: Docker Setup (Development)
 
 ```bash
-# Get personalized recommendations for a customer
-bin/magento recommendation:personalized 123 --type=just_for_you --limit=10
+# Clone the repository
+git clone https://github.com/navindbhudiya/magento2-product-recommendation.git
 
-# Refresh customer profiles
-bin/magento recommendation:refresh-profiles 123
-bin/magento recommendation:refresh-profiles --all --stale=24
+# Navigate to docker directory
+cd magento2-product-recommendation/docker
+
+# Start ChromaDB
+docker-compose -f docker-compose.chromadb.yml up -d
+
+# Optional: Start embedding service
+docker-compose up -d
 ```
 
-### REST API Endpoints
+---
+
+## ⚙️ Configuration
+
+### 1. ChromaDB Setup
+
+```bash
+# Install ChromaDB (if self-hosting)
+pip install chromadb
+
+# Start ChromaDB server
+chroma run --host 0.0.0.0 --port 8000
+
+# Or use Docker
+docker run -d -p 8000:8000 chromadb/chroma
+```
+
+### 2. Admin Configuration
+
+Navigate to: **Stores → Configuration → NavinDBhudiya → Product Recommendation**
+
+#### ChromaDB Settings
+- **Enable Module**: Yes
+- **ChromaDB Host**: http://localhost:8000
+- **Collection Name**: magento_products
+- **Batch Size**: 100 (for indexing)
+
+#### Embedding Provider
+- **Provider**: ChromaDB (built-in) or Custom Service
+- **Embedding Service URL**: http://localhost:5000 (if using custom)
+- **Embedding Model**: all-MiniLM-L6-v2 (default)
+
+#### LLM Provider (Optional)
+- **Enable LLM Ranking**: Yes
+- **Provider**: Claude or OpenAI
+- **API Key**: your-api-key-here
+- **Model**: claude-3-sonnet-20240229 or gpt-4
+
+#### Product Attributes
+- **Attributes for Embeddings**:
+    - name
+    - description
+    - short_description
+    - category_names
+    - brand (if available)
+
+#### Recommendation Settings
+- **Max Recommendations**: 10
+- **Similarity Threshold**: 0.7
+- **Enable Personalization**: Yes
+- **Tracking Cookie Name**: pr_tracking
+- **Cache TTL**: 3600 seconds
+
+#### Behavior Tracking
+- **Track Product Views**: Yes
+- **Track Purchases**: Yes
+- **Track Wishlist Adds**: Yes
+- **Behavior Weight**:
+    - View: 1.0
+    - Cart Add: 2.0
+    - Purchase: 3.0
+    - Wishlist: 2.5
+
+---
+
+## 🏗️ Module Architecture
+
+### Data Flow
 
 ```
-GET /V1/recommendation/personalized/browsing
-GET /V1/recommendation/personalized/purchase
-GET /V1/recommendation/personalized/wishlist
-GET /V1/recommendation/personalized/justforyou
-GET /V1/recommendation/personalized/guest/browsing
+┌─────────────────────────────────────────────────────────────┐
+│                     MAGENTO 2 FRONTEND                       │
+│  (Product Pages, CMS Widgets, API Calls)                    │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   RECOMMENDATION LAYER                       │
+│                                                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
+│  │   Plugins    │  │   Blocks     │  │     API      │     │
+│  │ (Related/    │  │ (Widgets/    │  │ (REST/       │     │
+│  │  Cross/Up)   │  │  Templates)  │  │  GraphQL)    │     │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘     │
+│         └──────────────────┼──────────────────┘             │
+│                            ▼                                 │
+│           ┌────────────────────────────┐                    │
+│           │  RecommendationService     │                    │
+│           │  - Get Similar Products    │                    │
+│           │  - Get Personalized        │                    │
+│           │  - Apply Filters           │                    │
+│           └──────────┬─────────────────┘                    │
+└──────────────────────┼──────────────────────────────────────┘
+                       │
+         ┌─────────────┼─────────────┐
+         ▼             ▼             ▼
+┌────────────┐ ┌────────────┐ ┌────────────┐
+│  ChromaDB  │ │    LLM     │ │   Cache    │
+│   Client   │ │  Re-Ranker │ │   Layer    │
+│ (Vector DB)│ │ (Optional) │ │            │
+└─────┬──────┘ └────────────┘ └────────────┘
+      │
+      ▼
+┌────────────────────────────────────────┐
+│         ChromaDB Server                │
+│  - Product Embeddings                  │
+│  - Similarity Search                   │
+│  - Vector Collections                  │
+└────────────────────────────────────────┘
+```
+
+### Component Flow
+
+#### 1. Product Indexing
+```
+Product Save → Observer → Indexer → Embedding Generation → ChromaDB Storage
+```
+
+#### 2. Recommendation Request
+```
+User Request → Plugin/Block → Service → Cache Check → ChromaDB Query → 
+LLM Ranking (optional) → Diversity Filter → Response
+```
+
+#### 3. Personalization
+```
+User Action → Behavior Collector → Customer Profile → Weight Calculation → 
+Personalized Recommendations
+```
+
+### Key Components
+
+#### Service Layer
+- **RecommendationService**: Core recommendation engine
+- **ChromaClient**: ChromaDB integration
+- **EmbeddingProvider**: Generates product embeddings
+- **LlmReRanker**: Re-ranks with LLM intelligence
+- **DiversityFilter**: Removes redundant suggestions
+- **ContextBuilder**: Builds user context
+- **BehaviorCollector**: Tracks user behavior
+
+#### Model Layer
+- **CustomerProfile**: Stores user preferences
+- **LlmRanking**: Caches LLM results
+- **ProductEmbedding**: Vector representations
+
+#### API Layer
+- **REST API**: `/rest/V1/recommendation/`
+- **GraphQL**: `personalizedRecommendations` query
+- **WebAPI**: Service contracts
+
+---
+
+## 📖 Usage
+
+### Frontend Implementation
+
+#### 1. Using Plugins (Automatic)
+The module automatically enhances:
+- Related Products block
+- Cross-sell Products (cart page)
+- Up-sell Products (product page)
+
+No additional code needed!
+
+#### 2. Using Widgets
+
+Add to any CMS page:
+```
+{{widget type="NavinDBhudiya\ProductRecommendation\Block\Widget\PersonalizedProducts" 
+  title="Recommended For You" 
+  max_products="8" 
+  template="NavinDBhudiya_ProductRecommendation::personalized/recommendations.phtml"}}
+```
+
+#### 3. Using Layout XML
+
+```xml
+<block class="NavinDBhudiya\ProductRecommendation\Block\Personalized\Recommendations"
+       name="product.recommendations"
+       template="NavinDBhudiya_ProductRecommendation::personalized/recommendations.phtml">
+    <arguments>
+        <argument name="max_products" xsi:type="number">10</argument>
+        <argument name="title" xsi:type="string">Recommended For You</argument>
+    </arguments>
+</block>
+```
+
+#### 4. Using AJAX (Dynamic Loading)
+
+```javascript
+require(['jquery'], function($) {
+    $.ajax({
+        url: '/productrecommendation/ajax/personalized',
+        type: 'GET',
+        data: {
+            product_id: 123, // optional
+            max_results: 10
+        },
+        success: function(response) {
+            console.log('Recommendations:', response);
+            // Render products
+        }
+    });
+});
 ```
 
 ### GraphQL Query
 
 ```graphql
 query {
-  personalizedRecommendations(type: JUST_FOR_YOU, limit: 8) {
-    items {
-      product {
-        name
-        sku
-        price_range { ... }
-      }
-      score
-      position
-    }
-    total_count
-    has_data
+  personalizedRecommendations(
+    customerId: 123
+    currentProductId: 456
+    maxResults: 10
+  ) {
+    product_id
+    sku
+    name
+    price
+    score
+    reason
   }
 }
 ```
 
-### Widget
+### REST API Call
 
-A CMS widget "AI Personalized Recommendations" is available for placement anywhere in your store via Content > Widgets.
+```bash
+# Get personalized recommendations
+curl -X GET "https://your-store.com/rest/V1/recommendation/personalized?customerId=123&maxResults=10" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 
-### Admin Configuration
-
-Navigate to **Stores > Configuration > NavinDBhudiya > AI Product Recommendation > Personalized Recommendations**:
-
-- Enable/disable each recommendation type
-- Set product limits
-- Configure weights for "Just For You" calculation
-- Choose which pages to display on
-
-### Database Tables
-
-| Table | Purpose |
-|-------|---------|
-| `ai_customer_profile` | Stores customer behavior profile embeddings |
-| `ai_personalized_recommendations` | Cached personalized recommendations |
-| `ai_guest_browsing_history` | Session-based guest browsing history |
-
-### Cron Jobs
-
-- **Refresh Profiles**: Runs every 6 hours to refresh stale customer profiles
-- **Cleanup**: Removes expired cache entries and old guest browsing history
-
-## License
-
-MIT License - See module files for details.
-
-## Credits
-
-- **Vector Database**: ChromaDB (https://www.trychroma.com/)
-- **Embedding Model**: sentence-transformers/all-MiniLM-L6-v2
-- **Framework**: Magento 2 Open Source
+# Get similar products
+curl -X GET "https://your-store.com/rest/V1/recommendation/similar/123?maxResults=10" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
 
 ---
 
-**Version**: 2.1.0
-**Magento**: 2.4.x
-**ChromaDB**: 0.4.24
-**PHP**: 8.1+
+## 💻 CLI Commands
+
+### Indexing Commands
+
+```bash
+# Index all products to ChromaDB
+php bin/magento productrecommendation:index:products
+
+# Index specific products by IDs
+php bin/magento productrecommendation:index:products --product-ids=1,2,3
+
+# Re-index specific store
+php bin/magento productrecommendation:index:products --store-id=2
+
+# Clear collection and re-index
+php bin/magento productrecommendation:index:products --clear-collection
+```
+
+### Recommendation Commands
+
+```bash
+# Get similar products for a product
+php bin/magento productrecommendation:similar:get 123
+
+# Get personalized recommendations for customer
+php bin/magento productrecommendation:personalized:get 456
+
+# Test with specific store view
+php bin/magento productrecommendation:personalized:get 456 --store-id=2
+```
+
+### Maintenance Commands
+
+```bash
+# Refresh customer profiles
+php bin/magento productrecommendation:profile:refresh
+
+# Refresh all profiles
+php bin/magento productrecommendation:profile:refresh --all
+
+# Refresh trending products data
+php bin/magento productrecommendation:trending:refresh
+
+# Clear ChromaDB collection
+php bin/magento productrecommendation:collection:clear
+
+# Test ChromaDB connection
+php bin/magento productrecommendation:connection:test
+```
+
+### Magento Indexer
+
+```bash
+# Reindex product embeddings
+php bin/magento indexer:reindex navindbhudiya_product_embedding
+
+# Check indexer status
+php bin/magento indexer:status navindbhudiya_product_embedding
+```
+
+---
+
+## 🔧 Cron Jobs
+
+The module includes several cron jobs:
+
+| Job | Schedule | Description |
+|-----|----------|-------------|
+| `productrecommendation_sync_embeddings` | Every 6 hours | Syncs product changes to ChromaDB |
+| `productrecommendation_refresh_profiles` | Daily at 2 AM | Refreshes customer profiles |
+| `productrecommendation_refresh_trending` | Every hour | Updates trending products data |
+| `productrecommendation_clean_cache` | Daily at 3 AM | Cleans expired cache entries |
+
+---
+
+## 📊 Database Tables
+
+The module creates the following tables:
+
+### `navindbhudiya_customer_profile`
+Stores customer behavior and preferences:
+- `profile_id` (primary)
+- `customer_id`
+- `viewed_products` (JSON)
+- `purchased_products` (JSON)
+- `wishlist_products` (JSON)
+- `category_preferences` (JSON)
+- `updated_at`
+
+### `navindbhudiya_llm_ranking`
+Caches LLM ranking results:
+- `ranking_id` (primary)
+- `product_id`
+- `context_hash`
+- `ranking_data` (JSON)
+- `model_name`
+- `created_at`
+
+---
+
+## 🐛 Troubleshooting
+
+### ChromaDB Connection Issues
+
+```bash
+# Test connection
+php bin/magento productrecommendation:connection:test
+
+# Check ChromaDB is running
+curl http://localhost:8000/api/v1/heartbeat
+
+# Check ChromaDB logs
+docker logs chromadb  # if using Docker
+```
+
+### Indexing Problems
+
+```bash
+# Clear and re-index
+php bin/magento productrecommendation:collection:clear
+php bin/magento productrecommendation:index:products
+
+# Check indexer status
+php bin/magento indexer:status
+
+# Reset indexer
+php bin/magento indexer:reset navindbhudiya_product_embedding
+php bin/magento indexer:reindex navindbhudiya_product_embedding
+```
+
+### No Recommendations Showing
+
+1. **Check module is enabled**:
+   ```bash
+   php bin/magento module:status NavinDBhudiya_ProductRecommendation
+   ```
+
+2. **Clear cache**:
+   ```bash
+   php bin/magento cache:clean
+   ```
+
+3. **Check configuration**:
+    - Stores → Configuration → NavinDBhudiya → Product Recommendation
+    - Ensure "Enable Module" is set to Yes
+
+4. **Check product indexing**:
+   ```bash
+   php bin/magento productrecommendation:index:products
+   ```
+
+5. **Check logs**:
+   ```bash
+   tail -f var/log/system.log | grep -i recommendation
+   tail -f var/log/exception.log
+   ```
+
+### Performance Issues
+
+1. **Enable caching**:
+    - Increase Cache TTL in admin config
+    - Enable Magento Full Page Cache
+
+2. **Optimize batch size**:
+    - Reduce batch size in admin config if memory issues
+    - Default: 100, try 50 for large catalogs
+
+3. **Use circuit breaker**:
+    - Configured automatically for LLM calls
+    - Prevents cascading failures
+
+---
+
+## 🔒 Security
+
+### API Authentication
+
+REST API endpoints require:
+- OAuth 1.0a or 2.0 authentication
+- Customer token for personalized recommendations
+- Admin token for management operations
+
+### Data Privacy
+
+- Customer behavior data is pseudonymized
+- Tracking uses secure cookies
+- Complies with GDPR requirements
+- Data retention configurable via admin
+
+---
+
+## 🧪 Testing
+
+### Unit Tests
+
+```bash
+# Run unit tests
+php vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/NavinDBhudiya/ProductRecommendation/Test/Unit
+
+# Run specific test
+php vendor/bin/phpunit app/code/NavinDBhudiya/ProductRecommendation/Test/Unit/Helper/ConfigTest.php
+```
+
+### Integration Testing
+
+```bash
+# Test recommendation flow
+php bin/magento productrecommendation:similar:get 123
+
+# Test with different parameters
+php bin/magento productrecommendation:personalized:get 456 --max-results=20
+```
+
+---
+
+## 📈 Performance Tips
+
+1. **Index regularly**: Schedule cron jobs for automated indexing
+2. **Use caching**: Enable recommendation caching with appropriate TTL
+3. **Optimize embeddings**: Select only relevant product attributes
+4. **Monitor ChromaDB**: Ensure adequate resources for vector searches
+5. **Batch operations**: Use CLI commands for bulk operations
+6. **Circuit breaker**: Enabled by default for external API stability
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+### Coding Standards
+
+- Follow Magento 2 Coding Standards
+- Use PHP_CodeSniffer with Magento rules
+- Add unit tests for new features
+- Update documentation
+
+---
+
+## 📝 Changelog
+
+### Version 2.1.0 (Current)
+- Added LLM re-ranking support
+- Improved personalization engine
+- GraphQL API support
+- Hyva theme compatibility
+- Enhanced caching layer
+- Circuit breaker pattern
+- Diversity filtering
+
+### Version 2.0.0
+- ChromaDB integration
+- Vector similarity search
+- Custom embedding providers
+- Admin configuration UI
+
+### Version 1.0.0
+- Initial release
+- Basic recommendation engine
+- CLI commands
+
+---
+
+## 📄 License
+
+This module is licensed under the MIT License. See [LICENSE](LICENSE) file for details.
+
+---
+
+## 👨‍💻 Author
+
+**Navin Bhudiya**
+- Email: navindbhudiya@gmail.com
+- GitHub: [@navindbhudiya](https://github.com/navindbhudiya)
+- Magento Certified: 4x
+- AWS Certified: 2x
+
+---
+
+## 🙏 Acknowledgments
+
+- Magento 2 Community
+- ChromaDB Team
+- Anthropic (Claude AI)
+- OpenAI
+
+---
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/navindbhudiya/magento2-product-recommendation/issues)
+- **Documentation**: [Wiki](https://github.com/navindbhudiya/magento2-product-recommendation/wiki)
+- **Email**: navindbhudiya@gmail.com
+
+---
+
+## 🌟 Star History
+
+If you find this module useful, please consider giving it a star on GitHub!
+
+[![Star History Chart](https://api.star-history.com/svg?repos=navindbhudiya/magento2-product-recommendation&type=Date)](https://star-history.com/#navindbhudiya/magento2-product-recommendation&Date)
+
+---
+
+**Made with ❤️ for the Magento Community**
