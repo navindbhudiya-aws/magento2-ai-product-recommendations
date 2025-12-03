@@ -626,25 +626,27 @@ Contributions are welcome! Please:
 
 ## 📝 Changelog
 
-### Version 2.1.0 (Current)
-- Added LLM re-ranking support
-- Improved personalization engine
-- GraphQL API support
+### Version 1.0.0 (Current)
+- ChromaDB integration for vector database
+- Vector similarity search for intelligent product matching
+- LLM re-ranking support (Claude AI & OpenAI)
+- Advanced personalization engine with behavior tracking
+- GraphQL API support for headless commerce
+- REST API with WebAPI integration
 - Hyva theme compatibility
-- Enhanced caching layer
-- Circuit breaker pattern
-- Diversity filtering
-
-### Version 2.0.0
-- ChromaDB integration
-- Vector similarity search
-- Custom embedding providers
+- Enhanced caching layer with configurable TTL
+- Circuit breaker pattern for fault tolerance
+- Diversity filtering to prevent redundant recommendations
+- Custom embedding providers support
 - Admin configuration UI
-
-### Version 1.0.0
-- Initial release
-- Basic recommendation engine
-- CLI commands
+- Multiple recommendation types (Related, Cross-sell, Up-sell, Personalized, Trending)
+- CLI commands for indexing and management
+- Magento indexer integration
+- Real-time product updates via observers
+- Cron jobs for automated data sync
+- Widget support for CMS pages
+- Customer behavior tracking (views, purchases, wishlist)
+- Initial release of complete AI-powered recommendation system
 
 ---
 
@@ -680,13 +682,3 @@ This module is licensed under the MIT License. See [LICENSE](LICENSE) file for d
 - **Email**: navindbhudiya@gmail.com
 
 ---
-
-## 🌟 Star History
-
-If you find this module useful, please consider giving it a star on GitHub!
-
-[![Star History Chart](https://api.star-history.com/svg?repos=navindbhudiya/magento2-product-recommendation&type=Date)](https://star-history.com/#navindbhudiya/magento2-product-recommendation&Date)
-
----
-
-**Made with ❤️ for the Magento Community**
