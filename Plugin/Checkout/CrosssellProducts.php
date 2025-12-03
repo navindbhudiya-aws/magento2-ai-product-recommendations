@@ -128,6 +128,12 @@ class CrosssellProducts
                 return $originalItems;
             }
 
+            // Get cart product IDs to filter out
+            $cartProductIds = [];
+            foreach ($cartItems as $item) {
+                $cartProductIds[] = (int) $item->getProduct()->getId();
+            }
+
             // Get AI recommendations for the last added item
             $lastItem = end($cartItems);
             /** @var Product|null $product */
@@ -150,18 +156,13 @@ class CrosssellProducts
                 return [];
             }
 
-            // Get cart product IDs to filter out
-            $cartProductIds = [];
-            foreach ($cartItems as $item) {
-                $cartProductIds[] = (int) $item->getProduct()->getId();
-            }
-
-            // Extract product IDs from AI recommendations (excluding cart items)
+            // Extract product IDs from AI recommendations (excluding ALL cart items)
             $productIds = [];
             foreach ($aiProducts as $aiProduct) {
-                $productId = (int) $aiProduct->getId();
-                if (!in_array($productId, $cartProductIds, true)) {
-                    $productIds[] = $productId;
+                $aiProductId = (int) $aiProduct->getId();
+                // Ensure cart products are never included
+                if (!in_array($aiProductId, $cartProductIds, true)) {
+                    $productIds[] = $aiProductId;
                 }
             }
 
