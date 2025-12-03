@@ -144,12 +144,22 @@ class RelatedProducts
                 return $this->createEmptyCollection();
             }
 
-            // Extract product IDs from AI recommendations
+            // Extract product IDs from AI recommendations, excluding current product
+            $currentProductId = (int) $product->getId();
             $productIds = [];
             foreach ($aiProducts as $aiProduct) {
-                $productIds[] = (int) $aiProduct->getId();
+                $aiProductId = (int) $aiProduct->getId();
+                // Ensure current product is never included
+                if ($aiProductId !== $currentProductId) {
+                    $productIds[] = $aiProductId;
+                }
             }
-            //var_dump($productIds);exit;
+
+            if (empty($productIds)) {
+                self::$isProcessing = false;
+                return $this->createEmptyCollection();
+            }
+
             // Create new collection with AI product IDs
             $aiCollection = $this->createProductCollection($productIds);
 
