@@ -19,7 +19,7 @@
         "openai"
     ],
     "type": "magento2-module",
-    "version": "2.1.0",
+    "version": "1.0.0",
     "license": "MIT",
     "homepage": "https://github.com/navindbhudiya-aws/magento2-ai-product-recommendations",
     "authors": [

@@ -658,7 +658,7 @@ This module is licensed under the MIT License. See [LICENSE](LICENSE) file for d
 
 ## 👨‍💻 Author
 
-**Navin Bhudiya**
+**Navin D. Bhudiya**
 - Email: navindbhudiya@gmail.com
 - GitHub: [@navindbhudiya](https://github.com/navindbhudiya-aws)
 - Magento Certified: 4x
