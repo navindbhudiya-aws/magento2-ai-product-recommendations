@@ -150,7 +150,7 @@ class BrowsingHistoryCollector implements BehaviorCollectorInterface
         }
 
         // Check our custom guest browsing table
-        $tableName = $this->resourceConnection->getTableName('ai_guest_browsing_history');
+        $tableName = $this->resourceConnection->getTableName('navindbhudiya_ai_guest_browsing_history');
         
         // Check if table exists
         if (!$connection->isTableExists($tableName)) {
@@ -178,7 +178,7 @@ class BrowsingHistoryCollector implements BehaviorCollectorInterface
     {
         try {
             $connection = $this->resourceConnection->getConnection();
-            $tableName = $this->resourceConnection->getTableName('ai_guest_browsing_history');
+            $tableName = $this->resourceConnection->getTableName('navindbhudiya_ai_guest_browsing_history');
             
             if (!$connection->isTableExists($tableName)) {
                 return;
@@ -224,7 +224,7 @@ class BrowsingHistoryCollector implements BehaviorCollectorInterface
     {
         try {
             $connection = $this->resourceConnection->getConnection();
-            $tableName = $this->resourceConnection->getTableName('ai_guest_browsing_history');
+            $tableName = $this->resourceConnection->getTableName('navindbhudiya_ai_guest_browsing_history');
             
             $cutoff = (new \DateTime())->modify('-30 days')->format('Y-m-d H:i:s');
             

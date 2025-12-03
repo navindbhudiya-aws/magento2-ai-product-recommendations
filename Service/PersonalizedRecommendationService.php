@@ -470,7 +470,7 @@ class PersonalizedRecommendationService implements PersonalizedRecommendationInt
     {
         try {
             $connection = $this->resourceConnection->getConnection();
-            $tableName = $this->resourceConnection->getTableName('ai_personalized_recommendations');
+            $tableName = $this->resourceConnection->getTableName('navindbhudiya_ai_personalized_recommendations');
             
             $where = ['customer_id = ?' => $customerId];
             if ($type !== null) {
@@ -768,7 +768,7 @@ class PersonalizedRecommendationService implements PersonalizedRecommendationInt
 
         try {
             $connection = $this->resourceConnection->getConnection();
-            $tableName = $this->resourceConnection->getTableName('ai_personalized_recommendations');
+            $tableName = $this->resourceConnection->getTableName('navindbhudiya_ai_personalized_recommendations');
 
             $select = $connection->select()
                 ->from($tableName)
@@ -807,7 +807,7 @@ class PersonalizedRecommendationService implements PersonalizedRecommendationInt
 
         try {
             $connection = $this->resourceConnection->getConnection();
-            $tableName = $this->resourceConnection->getTableName('ai_personalized_recommendations');
+            $tableName = $this->resourceConnection->getTableName('navindbhudiya_ai_personalized_recommendations');
 
             $expiresAt = (new \DateTime())
                 ->modify('+' . $this->config->getCacheLifetime() . ' seconds')

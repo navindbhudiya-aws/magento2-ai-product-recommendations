@@ -122,7 +122,7 @@ class RefreshCustomerProfiles
     {
         try {
             $connection = $this->resourceConnection->getConnection();
-            $tableName = $this->resourceConnection->getTableName('ai_personalized_recommendations');
+            $tableName = $this->resourceConnection->getTableName('navindbhudiya_ai_personalized_recommendations');
             
             if (!$connection->isTableExists($tableName)) {
                 return;
@@ -148,7 +148,7 @@ class RefreshCustomerProfiles
     {
         try {
             $connection = $this->resourceConnection->getConnection();
-            $tableName = $this->resourceConnection->getTableName('ai_guest_browsing_history');
+            $tableName = $this->resourceConnection->getTableName('navindbhudiya_ai_guest_browsing_history');
             
             if (!$connection->isTableExists($tableName)) {
                 return;
