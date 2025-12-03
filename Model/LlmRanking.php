@@ -1,20 +1,20 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Model;
+namespace NavinDBhudiya\ProductRecommendation\Model;
 
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Stdlib\DateTime\DateTime;
-use Navindbhudiya\ProductRecommendation\Api\Data\LlmRankingInterface;
+use NavinDBhudiya\ProductRecommendation\Api\Data\LlmRankingInterface;
 
 /**
  * LLM Ranking Model
@@ -38,8 +38,8 @@ class LlmRanking extends AbstractModel implements LlmRankingInterface
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         DateTime $dateTime,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->dateTime = $dateTime;
@@ -51,7 +51,7 @@ class LlmRanking extends AbstractModel implements LlmRankingInterface
      */
     protected function _construct()
     {
-        $this->_init(\Navindbhudiya\ProductRecommendation\Model\ResourceModel\LlmRanking::class);
+        $this->_init(\NavinDBhudiya\ProductRecommendation\Model\ResourceModel\LlmRanking::class);
     }
 
     /**

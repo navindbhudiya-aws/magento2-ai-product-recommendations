@@ -1,16 +1,16 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Api\Data;
+namespace NavinDBhudiya\ProductRecommendation\Api\Data;
 
 /**
  * Interface for product embedding data

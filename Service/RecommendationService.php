@@ -1,16 +1,16 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Service;
+namespace NavinDBhudiya\ProductRecommendation\Service;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
@@ -24,14 +24,14 @@ use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Store\Model\StoreManagerInterface;
-use Navindbhudiya\ProductRecommendation\Api\Data\LlmRankingInterfaceFactory;
-use Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface;
-use Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterfaceFactory;
-use Navindbhudiya\ProductRecommendation\Api\EmbeddingProviderInterface;
-use Navindbhudiya\ProductRecommendation\Api\LlmRankingRepositoryInterface;
-use Navindbhudiya\ProductRecommendation\Api\RecommendationServiceInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
-use Navindbhudiya\ProductRecommendation\Model\Cache\Type\Recommendation as RecommendationCache;
+use NavinDBhudiya\ProductRecommendation\Api\Data\LlmRankingInterfaceFactory;
+use NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface;
+use NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterfaceFactory;
+use NavinDBhudiya\ProductRecommendation\Api\EmbeddingProviderInterface;
+use NavinDBhudiya\ProductRecommendation\Api\LlmRankingRepositoryInterface;
+use NavinDBhudiya\ProductRecommendation\Api\RecommendationServiceInterface;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Model\Cache\Type\Recommendation as RecommendationCache;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -172,11 +172,11 @@ class RecommendationService implements RecommendationServiceInterface
         RecommendationResultInterfaceFactory $resultFactory,
         LoggerInterface $logger,
         StockHelper $stockHelper,
-        LlmReRanker $llmReRanker = null,
-        LlmRankingRepositoryInterface $llmRankingRepository = null,
-        LlmRankingInterfaceFactory $llmRankingFactory = null,
-        CustomerSession $customerSession = null,
-        DateTime $dateTime = null
+        ?LlmReRanker $llmReRanker = null,
+        ?LlmRankingRepositoryInterface $llmRankingRepository = null,
+        ?LlmRankingInterfaceFactory $llmRankingFactory = null,
+        ?CustomerSession $customerSession = null,
+        ?DateTime $dateTime = null
     ) {
         $this->chromaClient = $chromaClient;
         $this->embeddingProvider = $embeddingProvider;
@@ -458,7 +458,7 @@ class RecommendationService implements RecommendationServiceInterface
                     try {
                         $expiresAt = gmdate('Y-m-d H:i:s', $this->dateTime->gmtTimestamp() + $this->config->getCacheLifetime());
 
-                        /** @var \Navindbhudiya\ProductRecommendation\Api\Data\LlmRankingInterface $ranking */
+                        /** @var \NavinDBhudiya\ProductRecommendation\Api\Data\LlmRankingInterface $ranking */
                         $ranking = $this->llmRankingFactory->create();
                         $ranking->setCustomerId($customerId)
                             ->setProductId($productId)

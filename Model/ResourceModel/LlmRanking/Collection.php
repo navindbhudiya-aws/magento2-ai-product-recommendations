@@ -1,20 +1,20 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Model\ResourceModel\LlmRanking;
+namespace NavinDBhudiya\ProductRecommendation\Model\ResourceModel\LlmRanking;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
-use Navindbhudiya\ProductRecommendation\Model\LlmRanking as Model;
-use Navindbhudiya\ProductRecommendation\Model\ResourceModel\LlmRanking as ResourceModel;
+use NavinDBhudiya\ProductRecommendation\Model\LlmRanking as Model;
+use NavinDBhudiya\ProductRecommendation\Model\ResourceModel\LlmRanking as ResourceModel;
 
 /**
  * LLM Ranking Collection

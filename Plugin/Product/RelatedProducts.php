@@ -1,16 +1,16 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Plugin\Product;
+namespace NavinDBhudiya\ProductRecommendation\Plugin\Product;
 
 use Magento\Catalog\Block\Product\ProductList\Related;
 use Magento\Catalog\Model\Product;
@@ -18,8 +18,8 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Framework\Registry;
 use Magento\Store\Model\StoreManagerInterface;
-use Navindbhudiya\ProductRecommendation\Api\RecommendationServiceInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Api\RecommendationServiceInterface;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
 use Psr\Log\LoggerInterface;
 
 /**

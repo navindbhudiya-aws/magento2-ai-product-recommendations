@@ -1,21 +1,21 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Console\Command;
+namespace NavinDBhudiya\ProductRecommendation\Console\Command;
 
 use Magento\Framework\Console\Cli;
-use Navindbhudiya\ProductRecommendation\Api\EmbeddingProviderInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
-use Navindbhudiya\ProductRecommendation\Service\ChromaClient;
+use NavinDBhudiya\ProductRecommendation\Api\EmbeddingProviderInterface;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Service\ChromaClient;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

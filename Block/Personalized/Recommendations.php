@@ -1,11 +1,11 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Block\Personalized;
+namespace NavinDBhudiya\ProductRecommendation\Block\Personalized;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Block\Product\AbstractProduct;
@@ -16,8 +16,8 @@ use Magento\Catalog\Pricing\Price\SpecialPriceBulkResolverInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Data\Helper\PostHelper;
 use Magento\Framework\Url\EncoderInterface as UrlEncoder;
-use Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
 
 /**
  * Block for displaying personalized recommendations

@@ -1,19 +1,19 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Cron;
+namespace NavinDBhudiya\ProductRecommendation\Cron;
 
-use Navindbhudiya\ProductRecommendation\Helper\Config;
-use Navindbhudiya\ProductRecommendation\Model\Indexer\ProductEmbedding;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Model\Indexer\ProductEmbedding;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -63,9 +63,7 @@ class SyncEmbeddings
         }
 
         try {
-            $this->logger->info('[ProductRecommendation] Starting scheduled embedding sync');
             $this->indexer->executeFull();
-            $this->logger->info('[ProductRecommendation] Scheduled embedding sync completed');
         } catch (\Exception $e) {
             $this->logger->error('[ProductRecommendation] Scheduled sync failed: ' . $e->getMessage());
         }

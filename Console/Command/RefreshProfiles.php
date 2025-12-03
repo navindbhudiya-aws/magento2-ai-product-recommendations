@@ -1,15 +1,15 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Console\Command;
+namespace NavinDBhudiya\ProductRecommendation\Console\Command;
 
 use Magento\Framework\Console\Cli;
-use Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
-use Navindbhudiya\ProductRecommendation\Model\ResourceModel\CustomerProfile as CustomerProfileResource;
+use NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
+use NavinDBhudiya\ProductRecommendation\Model\ResourceModel\CustomerProfile as CustomerProfileResource;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

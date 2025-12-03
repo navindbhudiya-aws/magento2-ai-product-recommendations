@@ -1,15 +1,15 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Model\Data;
+namespace NavinDBhudiya\ProductRecommendation\Model\Data;
 
 use Magento\Framework\Model\AbstractModel;
-use Navindbhudiya\ProductRecommendation\Api\Data\CustomerProfileInterface;
-use Navindbhudiya\ProductRecommendation\Model\ResourceModel\CustomerProfile as ResourceModel;
+use NavinDBhudiya\ProductRecommendation\Api\Data\CustomerProfileInterface;
+use NavinDBhudiya\ProductRecommendation\Model\ResourceModel\CustomerProfile as ResourceModel;
 
 /**
  * Customer AI Profile Model

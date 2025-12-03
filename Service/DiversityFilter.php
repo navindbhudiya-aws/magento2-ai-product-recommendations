@@ -1,6 +1,6 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
  * Diversity Filter - Ensures variety in recommendations
  * Prevents showing 5 red shoes - ensures customers see variety
@@ -8,10 +8,10 @@
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Service;
+namespace NavinDBhudiya\ProductRecommendation\Service;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
 use Psr\Log\LoggerInterface;
 
 class DiversityFilter

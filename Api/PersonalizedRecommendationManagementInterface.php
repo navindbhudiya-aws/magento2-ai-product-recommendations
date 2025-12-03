@@ -1,11 +1,11 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Api;
+namespace NavinDBhudiya\ProductRecommendation\Api;
 
 /**
  * Interface for REST API personalized recommendation management
@@ -17,7 +17,7 @@ interface PersonalizedRecommendationManagementInterface
      *
      * @param int $customerId
      * @param int $limit
-     * @return \Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
+     * @return \NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
      */
     public function getBrowsingInspired(int $customerId, int $limit = 8): array;
 
@@ -26,7 +26,7 @@ interface PersonalizedRecommendationManagementInterface
      *
      * @param int $customerId
      * @param int $limit
-     * @return \Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
+     * @return \NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
      */
     public function getPurchaseInspired(int $customerId, int $limit = 8): array;
 
@@ -35,7 +35,7 @@ interface PersonalizedRecommendationManagementInterface
      *
      * @param int $customerId
      * @param int $limit
-     * @return \Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
+     * @return \NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
      */
     public function getWishlistInspired(int $customerId, int $limit = 8): array;
 
@@ -44,7 +44,7 @@ interface PersonalizedRecommendationManagementInterface
      *
      * @param int $customerId
      * @param int $limit
-     * @return \Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
+     * @return \NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
      */
     public function getJustForYou(int $customerId, int $limit = 12): array;
 
@@ -52,7 +52,7 @@ interface PersonalizedRecommendationManagementInterface
      * Get browsing-inspired recommendations for guest (session-based)
      *
      * @param int $limit
-     * @return \Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
+     * @return \NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
      */
     public function getGuestBrowsingInspired(int $limit = 8): array;
 
@@ -62,7 +62,7 @@ interface PersonalizedRecommendationManagementInterface
      * @param int $customerId
      * @param string $type
      * @param int $limit
-     * @return \Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
+     * @return \NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
      */
     public function getCustomerRecommendations(int $customerId, string $type, int $limit = 8): array;
 

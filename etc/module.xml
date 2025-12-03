@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Navindbhudiya_ProductRecommendation" setup_version="2.1.0">
+    <module name="NavinDBhudiya_ProductRecommendation" setup_version="2.1.0">
         <sequence>
             <module name="Magento_Catalog"/>
             <module name="Magento_Store"/>

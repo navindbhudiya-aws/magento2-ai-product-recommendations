@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  * Homepage layout - adds all personalized recommendation sections
  */
 -->
@@ -13,9 +13,9 @@
         <referenceContainer name="content.bottom">
             
             <!-- Recommended Just For You (Combined) -->
-            <block class="Navindbhudiya\ProductRecommendation\Block\Personalized\Recommendations"
+            <block class="NavinDBhudiya\ProductRecommendation\Block\Personalized\Recommendations"
                    name="homepage.personalized.just.for.you"
-                   template="Navindbhudiya_ProductRecommendation::personalized/recommendations.phtml"
+                   template="NavinDBhudiya_ProductRecommendation::personalized/recommendations.phtml"
                    before="-">
                 <arguments>
                     <argument name="recommendation_type" xsi:type="string">just_for_you</argument>
@@ -25,9 +25,9 @@
             </block>
             
             <!-- Inspired by Your Browsing -->
-            <block class="Navindbhudiya\ProductRecommendation\Block\Personalized\Recommendations"
+            <block class="NavinDBhudiya\ProductRecommendation\Block\Personalized\Recommendations"
                    name="homepage.personalized.browsing"
-                   template="Navindbhudiya_ProductRecommendation::personalized/recommendations.phtml"
+                   template="NavinDBhudiya_ProductRecommendation::personalized/recommendations.phtml"
                    after="homepage.personalized.just.for.you">
                 <arguments>
                     <argument name="recommendation_type" xsi:type="string">browsing</argument>
@@ -37,9 +37,9 @@
             </block>
             
             <!-- Based on Your Past Purchases -->
-            <block class="Navindbhudiya\ProductRecommendation\Block\Personalized\Recommendations"
+            <block class="NavinDBhudiya\ProductRecommendation\Block\Personalized\Recommendations"
                    name="homepage.personalized.purchase"
-                   template="Navindbhudiya_ProductRecommendation::personalized/recommendations.phtml"
+                   template="NavinDBhudiya_ProductRecommendation::personalized/recommendations.phtml"
                    after="homepage.personalized.browsing">
                 <arguments>
                     <argument name="recommendation_type" xsi:type="string">purchase</argument>
@@ -49,9 +49,9 @@
             </block>
             
             <!-- Inspired by Your Wishlist -->
-            <block class="Navindbhudiya\ProductRecommendation\Block\Personalized\Recommendations"
+            <block class="NavinDBhudiya\ProductRecommendation\Block\Personalized\Recommendations"
                    name="homepage.personalized.wishlist"
-                   template="Navindbhudiya_ProductRecommendation::personalized/recommendations.phtml"
+                   template="NavinDBhudiya_ProductRecommendation::personalized/recommendations.phtml"
                    after="homepage.personalized.purchase">
                 <arguments>
                     <argument name="recommendation_type" xsi:type="string">wishlist</argument>

@@ -1,16 +1,16 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
  * CLI command to refresh trending products
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Console\Command;
+namespace NavinDBhudiya\ProductRecommendation\Console\Command;
 
 use Magento\Store\Model\StoreManagerInterface;
-use Navindbhudiya\ProductRecommendation\Service\TrendingBooster;
+use NavinDBhudiya\ProductRecommendation\Service\TrendingBooster;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -24,7 +24,7 @@ class RefreshTrending extends Command
     public function __construct(
         TrendingBooster $trendingBooster,
         StoreManagerInterface $storeManager,
-        string $name = null
+        ?string $name = null
     ) {
         parent::__construct($name);
         $this->trendingBooster = $trendingBooster;

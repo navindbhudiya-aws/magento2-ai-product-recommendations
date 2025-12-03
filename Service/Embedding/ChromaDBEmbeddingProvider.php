@@ -1,22 +1,22 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Service\Embedding;
+namespace NavinDBhudiya\ProductRecommendation\Service\Embedding;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientFactory;
 use GuzzleHttp\Exception\GuzzleException;
-use Navindbhudiya\ProductRecommendation\Api\EmbeddingProviderInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Api\EmbeddingProviderInterface;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -157,7 +157,9 @@ class ChromaDBEmbeddingProvider implements EmbeddingProviderInterface
             $result = json_decode($response->getBody()->getContents(), true);
             return ($result['status'] ?? '') === 'ok';
         } catch (\Exception $e) {
-            $this->logger->debug('[ProductRecommendation] Embedding service not available: ' . $e->getMessage());
+            if ($this->config->isDebugMode()) {
+                $this->logger->debug('[ProductRecommendation] Embedding service not available: ' . $e->getMessage());
+            }
             return false;
         }
     }

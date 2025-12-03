@@ -1,11 +1,11 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Service;
+namespace NavinDBhudiya\ProductRecommendation\Service;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
@@ -14,13 +14,13 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Navindbhudiya\ProductRecommendation\Api\EmbeddingProviderInterface;
-use Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
-use Navindbhudiya\ProductRecommendation\Model\ResourceModel\CustomerProfile as CustomerProfileResource;
-use Navindbhudiya\ProductRecommendation\Service\BehaviorCollector\BrowsingHistoryCollector;
-use Navindbhudiya\ProductRecommendation\Service\BehaviorCollector\PurchaseHistoryCollector;
-use Navindbhudiya\ProductRecommendation\Service\BehaviorCollector\WishlistCollector;
+use NavinDBhudiya\ProductRecommendation\Api\EmbeddingProviderInterface;
+use NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Model\ResourceModel\CustomerProfile as CustomerProfileResource;
+use NavinDBhudiya\ProductRecommendation\Service\BehaviorCollector\BrowsingHistoryCollector;
+use NavinDBhudiya\ProductRecommendation\Service\BehaviorCollector\PurchaseHistoryCollector;
+use NavinDBhudiya\ProductRecommendation\Service\BehaviorCollector\WishlistCollector;
 use Psr\Log\LoggerInterface;
 
 /**

@@ -1,19 +1,19 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Cron;
+namespace NavinDBhudiya\ProductRecommendation\Cron;
 
-use Navindbhudiya\ProductRecommendation\Api\RecommendationServiceInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Api\RecommendationServiceInterface;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -63,9 +63,7 @@ class CleanCache
         }
 
         try {
-            $this->logger->info('[ProductRecommendation] Starting cache cleanup');
             $this->recommendationService->clearAllCache();
-            $this->logger->info('[ProductRecommendation] Cache cleanup completed');
         } catch (\Exception $e) {
             $this->logger->error('[ProductRecommendation] Cache cleanup failed: ' . $e->getMessage());
         }

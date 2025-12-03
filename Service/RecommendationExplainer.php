@@ -1,16 +1,16 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
  * Recommendation Explainer - Generates explanations like "Recommended because similar features"
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Service;
+namespace NavinDBhudiya\ProductRecommendation\Service;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
 use Psr\Log\LoggerInterface;
 
 class RecommendationExplainer

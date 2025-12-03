@@ -1,18 +1,18 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Block\Widget;
+namespace NavinDBhudiya\ProductRecommendation\Block\Widget;
 
 use Magento\Catalog\Block\Product\Context;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Widget\Block\BlockInterface;
-use Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
-use Navindbhudiya\ProductRecommendation\Block\Personalized\Recommendations;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
+use NavinDBhudiya\ProductRecommendation\Block\Personalized\Recommendations;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
 
 /**
  * Widget for displaying personalized recommendations in CMS content
@@ -22,7 +22,7 @@ class PersonalizedProducts extends Recommendations implements BlockInterface
     /**
      * @var string
      */
-    protected $_template = 'Navindbhudiya_ProductRecommendation::personalized/recommendations.phtml';
+    protected $_template = 'NavinDBhudiya_ProductRecommendation::personalized/recommendations.phtml';
 
     /**
      * @inheritDoc

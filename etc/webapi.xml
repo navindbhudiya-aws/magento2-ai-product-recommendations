@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  * REST API Configuration
  */
 -->
@@ -10,7 +10,7 @@
 
     <!-- Get browsing-inspired recommendations -->
     <route url="/V1/recommendation/personalized/browsing" method="GET">
-        <service class="Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="getBrowsingInspired"/>
+        <service class="NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="getBrowsingInspired"/>
         <resources>
             <resource ref="self"/>
         </resources>
@@ -21,7 +21,7 @@
 
     <!-- Get purchase-inspired recommendations -->
     <route url="/V1/recommendation/personalized/purchase" method="GET">
-        <service class="Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="getPurchaseInspired"/>
+        <service class="NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="getPurchaseInspired"/>
         <resources>
             <resource ref="self"/>
         </resources>
@@ -32,7 +32,7 @@
 
     <!-- Get wishlist-inspired recommendations -->
     <route url="/V1/recommendation/personalized/wishlist" method="GET">
-        <service class="Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="getWishlistInspired"/>
+        <service class="NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="getWishlistInspired"/>
         <resources>
             <resource ref="self"/>
         </resources>
@@ -43,7 +43,7 @@
 
     <!-- Get "Just For You" combined recommendations -->
     <route url="/V1/recommendation/personalized/justforyou" method="GET">
-        <service class="Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="getJustForYou"/>
+        <service class="NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="getJustForYou"/>
         <resources>
             <resource ref="self"/>
         </resources>
@@ -54,7 +54,7 @@
 
     <!-- Guest browsing recommendations (session-based) -->
     <route url="/V1/recommendation/personalized/guest/browsing" method="GET">
-        <service class="Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="getGuestBrowsingInspired"/>
+        <service class="NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="getGuestBrowsingInspired"/>
         <resources>
             <resource ref="anonymous"/>
         </resources>
@@ -62,17 +62,17 @@
 
     <!-- Admin: Get recommendations for any customer -->
     <route url="/V1/recommendation/personalized/customer/:customerId/:type" method="GET">
-        <service class="Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="getCustomerRecommendations"/>
+        <service class="NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="getCustomerRecommendations"/>
         <resources>
-            <resource ref="Navindbhudiya_ProductRecommendation::recommendation"/>
+            <resource ref="NavinDBhudiya_ProductRecommendation::recommendation"/>
         </resources>
     </route>
 
     <!-- Admin: Refresh customer profile -->
     <route url="/V1/recommendation/personalized/refresh/:customerId" method="POST">
-        <service class="Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="refreshCustomerProfile"/>
+        <service class="NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface" method="refreshCustomerProfile"/>
         <resources>
-            <resource ref="Navindbhudiya_ProductRecommendation::recommendation"/>
+            <resource ref="NavinDBhudiya_ProductRecommendation::recommendation"/>
         </resources>
     </route>
 

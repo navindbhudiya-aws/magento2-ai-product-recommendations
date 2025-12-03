@@ -47,7 +47,7 @@ pip install flask gunicorn sentence-transformers
 
 # Create the app.py file (copy from docker/embedding-service/app.py)
 # Or run directly:
-cd /path/to/magento/app/code/Navindbhudiya/ProductRecommendation/docker/embedding-service
+cd /path/to/magento/app/code/NavinDBhudiya/ProductRecommendation/docker/embedding-service
 python app.py
 ```
 
@@ -55,7 +55,7 @@ The embedding service will run at `http://localhost:8001`
 
 ### Step 4: Configure Magento
 
-In Magento admin: Stores > Configuration > Navindbhudiya > AI Product Recommendation
+In Magento admin: Stores > Configuration > NavinDBhudiya > AI Product Recommendation
 
 Set:
 - **ChromaDB Host**: `localhost` (or `127.0.0.1`)

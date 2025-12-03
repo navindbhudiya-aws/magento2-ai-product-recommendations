@@ -1,9 +1,9 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  * Personalized Recommendations Slider Template
  *
- * @var \Navindbhudiya\ProductRecommendation\Block\Personalized\Recommendations $block
+ * @var \NavinDBhudiya\ProductRecommendation\Block\Personalized\Recommendations $block
  */
 
 $products = $block->getProducts();
@@ -18,7 +18,7 @@ $sliderId = 'personalized-slider-' . uniqid();
 
 <div class="block block-personalized-recommendations block-<?= $block->escapeHtmlAttr($type) ?> slider-mode"
      id="<?= $block->escapeHtmlAttr($sliderId) ?>-container"
-     data-mage-init='{"Navindbhudiya_ProductRecommendation/js/personalized-slider": {"sliderId": "<?= $block->escapeHtmlAttr($sliderId) ?>"}}'>
+     data-mage-init='{"NavinDBhudiya_ProductRecommendation/js/personalized-slider": {"sliderId": "<?= $block->escapeHtmlAttr($sliderId) ?>"}}'>
     
     <div class="block-title title">
         <strong id="block-<?= $block->escapeHtmlAttr($type) ?>-heading" role="heading" aria-level="2">

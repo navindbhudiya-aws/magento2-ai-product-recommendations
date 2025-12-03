@@ -1,23 +1,23 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Service\Llm;
+namespace NavinDBhudiya\ProductRecommendation\Service\Llm;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientFactory;
 use GuzzleHttp\Exception\GuzzleException;
-use Navindbhudiya\ProductRecommendation\Api\LlmProviderInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
-use Navindbhudiya\ProductRecommendation\Service\CircuitBreaker;
+use NavinDBhudiya\ProductRecommendation\Api\LlmProviderInterface;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Service\CircuitBreaker;
 use Psr\Log\LoggerInterface;
 
 /**

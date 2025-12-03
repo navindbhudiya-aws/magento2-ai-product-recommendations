@@ -1,17 +1,17 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Model;
+namespace NavinDBhudiya\ProductRecommendation\Model;
 
 use Magento\Store\Model\StoreManagerInterface;
-use Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
-use Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface;
-use Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface;
-use Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterfaceFactory;
+use NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
+use NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationManagementInterface;
+use NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface;
+use NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterfaceFactory;
 
 /**
  * REST API implementation for personalized recommendations

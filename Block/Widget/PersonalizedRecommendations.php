@@ -1,15 +1,15 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Block\Widget;
+namespace NavinDBhudiya\ProductRecommendation\Block\Widget;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Widget\Block\BlockInterface;
-use Navindbhudiya\ProductRecommendation\Block\Personalized\Recommendations;
+use NavinDBhudiya\ProductRecommendation\Block\Personalized\Recommendations;
 
 /**
  * Widget for displaying personalized recommendations
@@ -19,7 +19,7 @@ class PersonalizedRecommendations extends Recommendations implements BlockInterf
     /**
      * @var string
      */
-    protected $_template = 'Navindbhudiya_ProductRecommendation::personalized/recommendations.phtml';
+    protected $_template = 'NavinDBhudiya_ProductRecommendation::personalized/recommendations.phtml';
 
     /**
      * Get widget title

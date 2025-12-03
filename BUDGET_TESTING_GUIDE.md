@@ -29,7 +29,7 @@
 
 **Admin Configuration:**
 ```
-Stores > Configuration > Navindbhudiya > AI Product Recommendation > LLM Re-Ranking
+Stores > Configuration > NavinDBhudiya > AI Product Recommendation > LLM Re-Ranking
 
 Settings:
 ✅ Enable LLM Re-Ranking: Yes
@@ -93,7 +93,7 @@ warden env exec php-fpm php bin/magento cache:flush
 
 **Or via Admin UI:**
 1. **Stores > Configuration**
-2. **Navindbhudiya > AI Product Recommendation > LLM Re-Ranking**
+2. **NavinDBhudiya > AI Product Recommendation > LLM Re-Ranking**
 3. Set values as shown above
 4. **Save Config**
 

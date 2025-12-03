@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  * Frontend events for personalized recommendations
  */
 -->
@@ -11,13 +11,13 @@
     <!-- Track product views for browsing history -->
     <event name="catalog_controller_product_view">
         <observer name="product_recommendation_track_view"
-                  instance="Navindbhudiya\ProductRecommendation\Observer\ProductViewTracker"/>
+                  instance="NavinDBhudiya\ProductRecommendation\Observer\ProductViewTracker"/>
     </event>
 
     <!-- Refresh profiles on customer login -->
     <event name="customer_login">
         <observer name="product_recommendation_customer_login_refresh"
-                  instance="Navindbhudiya\ProductRecommendation\Observer\CustomerLoginRefresh"/>
+                  instance="NavinDBhudiya\ProductRecommendation\Observer\CustomerLoginRefresh"/>
     </event>
 
 </config>

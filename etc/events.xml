@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
@@ -15,19 +15,19 @@
     <!-- Product Save After -->
     <event name="catalog_product_save_after">
         <observer name="product_recommendation_update_embedding"
-                  instance="Navindbhudiya\ProductRecommendation\Observer\ProductSaveAfter"/>
+                  instance="NavinDBhudiya\ProductRecommendation\Observer\ProductSaveAfter"/>
     </event>
 
     <!-- Product Delete Before -->
     <event name="catalog_product_delete_before">
         <observer name="product_recommendation_delete_embedding"
-                  instance="Navindbhudiya\ProductRecommendation\Observer\ProductDeleteBefore"/>
+                  instance="NavinDBhudiya\ProductRecommendation\Observer\ProductDeleteBefore"/>
     </event>
 
     <!-- Mass Product Update -->
     <event name="catalog_product_attribute_update_before">
         <observer name="product_recommendation_mass_update"
-                  instance="Navindbhudiya\ProductRecommendation\Observer\ProductMassUpdate"/>
+                  instance="NavinDBhudiya\ProductRecommendation\Observer\ProductMassUpdate"/>
     </event>
 
 </config>

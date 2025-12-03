@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
@@ -12,7 +12,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Mview/etc/mview.xsd">
     <view id="product_recommendation_embedding"
-          class="Navindbhudiya\ProductRecommendation\Model\Indexer\ProductEmbedding"
+          class="NavinDBhudiya\ProductRecommendation\Model\Indexer\ProductEmbedding"
           group="indexer">
         <subscriptions>
             <table name="catalog_product_entity" entity_column="entity_id"/>

@@ -77,7 +77,7 @@ Next visit: Show LLM-ranked results from DB
         xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/consumer.xsd">
     <consumer name="llmRerankConsumer"
               queue="product.recommendation.llm.rerank"
-              handler="Navindbhudiya\ProductRecommendation\Model\Queue\LlmRerankConsumer::process"
+              handler="NavinDBhudiya\ProductRecommendation\Model\Queue\LlmRerankConsumer::process"
               consumerInstance="Magento\Framework\MessageQueue\Consumer"
               connection="db"
               maxMessages="100"/>
@@ -99,10 +99,10 @@ Next visit: Show LLM-ranked results from DB
 4. **`Model/Queue/LlmRerankConsumer.php`**
 ```php
 <?php
-namespace Navindbhudiya\ProductRecommendation\Model\Queue;
+namespace NavinDBhudiya\ProductRecommendation\Model\Queue;
 
-use Navindbhudiya\ProductRecommendation\Service\LlmReRanker;
-use Navindbhudiya\ProductRecommendation\Api\LlmRankingRepositoryInterface;
+use NavinDBhudiya\ProductRecommendation\Service\LlmReRanker;
+use NavinDBhudiya\ProductRecommendation\Api\LlmRankingRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
 class LlmRerankConsumer
@@ -218,7 +218,7 @@ autorestart=true
 **For Popular Products:**
 ```xml
 <!-- etc/crontab.xml -->
-<job name="prewarm_llm_rankings" instance="Navindbhudiya\ProductRecommendation\Cron\PrewarmLlmRankings" method="execute">
+<job name="prewarm_llm_rankings" instance="NavinDBhudiya\ProductRecommendation\Cron\PrewarmLlmRankings" method="execute">
     <schedule>0 */6 * * *</schedule> <!-- Every 6 hours -->
 </job>
 ```

@@ -1,25 +1,25 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Model;
+namespace NavinDBhudiya\ProductRecommendation\Model;
 
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Navindbhudiya\ProductRecommendation\Api\Data\LlmRankingInterface;
-use Navindbhudiya\ProductRecommendation\Api\Data\LlmRankingInterfaceFactory;
-use Navindbhudiya\ProductRecommendation\Api\LlmRankingRepositoryInterface;
-use Navindbhudiya\ProductRecommendation\Model\ResourceModel\LlmRanking as ResourceModel;
-use Navindbhudiya\ProductRecommendation\Model\ResourceModel\LlmRanking\CollectionFactory;
+use NavinDBhudiya\ProductRecommendation\Api\Data\LlmRankingInterface;
+use NavinDBhudiya\ProductRecommendation\Api\Data\LlmRankingInterfaceFactory;
+use NavinDBhudiya\ProductRecommendation\Api\LlmRankingRepositoryInterface;
+use NavinDBhudiya\ProductRecommendation\Model\ResourceModel\LlmRanking as ResourceModel;
+use NavinDBhudiya\ProductRecommendation\Model\ResourceModel\LlmRanking\CollectionFactory;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -183,14 +183,7 @@ class LlmRankingRepository implements LlmRankingRepositoryInterface
     public function deleteExpired(): int
     {
         try {
-            $count = $this->resourceModel->deleteExpired();
-
-            $this->logger->info(
-                '[ProductRecommendation][LlmRankingRepository] Deleted expired rankings',
-                ['count' => $count]
-            );
-
-            return $count;
+            return $this->resourceModel->deleteExpired();
         } catch (\Exception $e) {
             $this->logger->error(
                 '[ProductRecommendation][LlmRankingRepository] Error deleting expired rankings: ' . $e->getMessage(),
@@ -206,14 +199,7 @@ class LlmRankingRepository implements LlmRankingRepositoryInterface
     public function deleteByCustomer(int $customerId): int
     {
         try {
-            $count = $this->resourceModel->deleteByCustomer($customerId);
-
-            $this->logger->info(
-                '[ProductRecommendation][LlmRankingRepository] Deleted customer rankings',
-                ['customer_id' => $customerId, 'count' => $count]
-            );
-
-            return $count;
+            return $this->resourceModel->deleteByCustomer($customerId);
         } catch (\Exception $e) {
             $this->logger->error(
                 '[ProductRecommendation][LlmRankingRepository] Error deleting customer rankings: ' . $e->getMessage(),
@@ -229,14 +215,7 @@ class LlmRankingRepository implements LlmRankingRepositoryInterface
     public function deleteByProduct(int $productId): int
     {
         try {
-            $count = $this->resourceModel->deleteByProduct($productId);
-
-            $this->logger->info(
-                '[ProductRecommendation][LlmRankingRepository] Deleted product rankings',
-                ['product_id' => $productId, 'count' => $count]
-            );
-
-            return $count;
+            return $this->resourceModel->deleteByProduct($productId);
         } catch (\Exception $e) {
             $this->logger->error(
                 '[ProductRecommendation][LlmRankingRepository] Error deleting product rankings: ' . $e->getMessage(),

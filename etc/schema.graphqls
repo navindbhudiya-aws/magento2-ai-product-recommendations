@@ -2,7 +2,7 @@ type Query {
     personalizedRecommendations(
         type: PersonalizedRecommendationType!
         limit: Int = 8
-    ): PersonalizedRecommendationsOutput @resolver(class: "Navindbhudiya\\ProductRecommendation\\Model\\Resolver\\PersonalizedRecommendations") @doc(description: "Get personalized AI product recommendations")
+    ): PersonalizedRecommendationsOutput @resolver(class: "NavinDBhudiya\\ProductRecommendation\\Model\\Resolver\\PersonalizedRecommendations") @doc(description: "Get personalized AI product recommendations")
 }
 
 enum PersonalizedRecommendationType {

@@ -1,16 +1,16 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Api;
+namespace NavinDBhudiya\ProductRecommendation\Api;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 
@@ -70,7 +70,7 @@ interface RecommendationServiceInterface
      * @param string $type
      * @param int|null $limit
      * @param int|null $storeId
-     * @return \Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
+     * @return \NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface[]
      */
     public function getRecommendationsWithScores(
         $product,

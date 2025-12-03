@@ -70,7 +70,7 @@ if (!empty($results)) {
         try {
             $expiresAt = gmdate('Y-m-d H:i:s', $this->dateTime->gmtTimestamp() + $this->config->getCacheLifetime());
 
-            /** @var \Navindbhudiya\ProductRecommendation\Api\Data\LlmRankingInterface $ranking */
+            /** @var \NavinDBhudiya\ProductRecommendation\Api\Data\LlmRankingInterface $ranking */
             $ranking = $this->llmRankingFactory->create();
             $ranking->setCustomerId($customerId)
                 ->setProductId($productId)
@@ -250,7 +250,7 @@ Expected output shows JSON array like: `[25, 17, 42, 8, 13]`
 ### 1. Add Cron Job to Clean Expired Records
 ```xml
 <!-- etc/crontab.xml -->
-<job name="product_recommendation_clean_expired_llm_rankings" instance="Navindbhudiya\ProductRecommendation\Cron\CleanExpiredLlmRankings" method="execute">
+<job name="product_recommendation_clean_expired_llm_rankings" instance="NavinDBhudiya\ProductRecommendation\Cron\CleanExpiredLlmRankings" method="execute">
     <schedule>0 2 * * *</schedule>
 </job>
 ```

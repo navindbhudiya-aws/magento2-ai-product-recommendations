@@ -1,15 +1,15 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Model\ResourceModel\CustomerProfile;
+namespace NavinDBhudiya\ProductRecommendation\Model\ResourceModel\CustomerProfile;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
-use Navindbhudiya\ProductRecommendation\Model\Data\CustomerProfile as Model;
-use Navindbhudiya\ProductRecommendation\Model\ResourceModel\CustomerProfile as ResourceModel;
+use NavinDBhudiya\ProductRecommendation\Model\Data\CustomerProfile as Model;
+use NavinDBhudiya\ProductRecommendation\Model\ResourceModel\CustomerProfile as ResourceModel;
 
 /**
  * Customer Profile Collection

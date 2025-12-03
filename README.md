@@ -54,15 +54,15 @@ pip install flask sentence-transformers
 
 ```bash
 # Copy module to Magento app/code directory
-mkdir -p app/code/Navindbhudiya/ProductRecommendation
-cp -r path/to/module/* app/code/Navindbhudiya/ProductRecommendation/
+mkdir -p app/code/NavinDBhudiya/ProductRecommendation
+cp -r path/to/module/* app/code/NavinDBhudiya/ProductRecommendation/
 ```
 
 ### 4. Enable Module
 
 ```bash
 # Enable module
-bin/magento module:enable Navindbhudiya_ProductRecommendation
+bin/magento module:enable NavinDBhudiya_ProductRecommendation
 
 # Run setup
 bin/magento setup:upgrade
@@ -87,7 +87,7 @@ bin/magento recommendation:test
 
 ## Configuration
 
-Navigate to: **Stores → Configuration → Navindbhudiya → AI Product Recommendation**
+Navigate to: **Stores → Configuration → NavinDBhudiya → AI Product Recommendation**
 
 ### General Settings
 - **Enable Module**: Turn recommendations on/off
@@ -227,7 +227,7 @@ Check your embedding service configuration in the admin panel.
 curl http://your-chromadb-host:8000/api/v1/heartbeat
 ```
 
-Verify ChromaDB host and port in **Stores > Configuration > Navindbhudiya > AI Product Recommendation > ChromaDB Configuration**.
+Verify ChromaDB host and port in **Stores > Configuration > NavinDBhudiya > AI Product Recommendation > ChromaDB Configuration**.
 
 ### "422 Error from ChromaDB"
 
@@ -276,7 +276,7 @@ The embedding service processes products sequentially. For large catalogs:
 ### Complete Module Structure
 
 ```
-app/code/Navindbhudiya/ProductRecommendation/
+app/code/NavinDBhudiya/ProductRecommendation/
 │
 ├── Api/                                          # Service Contracts & Interfaces
 │   ├── Data/
@@ -599,7 +599,7 @@ A CMS widget "AI Personalized Recommendations" is available for placement anywhe
 
 ### Admin Configuration
 
-Navigate to **Stores > Configuration > Navindbhudiya > AI Product Recommendation > Personalized Recommendations**:
+Navigate to **Stores > Configuration > NavinDBhudiya > AI Product Recommendation > Personalized Recommendations**:
 
 - Enable/disable each recommendation type
 - Set product limits

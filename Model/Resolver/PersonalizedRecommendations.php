@@ -1,18 +1,18 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Model\Resolver;
+namespace NavinDBhudiya\ProductRecommendation\Model\Resolver;
 
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Store\Model\StoreManagerInterface;
-use Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
+use NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
 
 /**
  * GraphQL resolver for personalized recommendations
@@ -56,8 +56,8 @@ class PersonalizedRecommendations implements ResolverInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ): array {
         $type = $this->convertType($args['type'] ?? 'JUST_FOR_YOU');
         $limit = (int) ($args['limit'] ?? 8);

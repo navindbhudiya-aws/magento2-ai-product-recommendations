@@ -1,23 +1,23 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Controller\Adminhtml\System\Config;
+namespace NavinDBhudiya\ProductRecommendation\Controller\Adminhtml\System\Config;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Navindbhudiya\ProductRecommendation\Api\EmbeddingProviderInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
-use Navindbhudiya\ProductRecommendation\Service\ChromaClient;
+use NavinDBhudiya\ProductRecommendation\Api\EmbeddingProviderInterface;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Service\ChromaClient;
 
 /**
  * Test connection controller
@@ -27,7 +27,7 @@ class TestConnection extends Action
     /**
      * Authorization level
      */
-    public const ADMIN_RESOURCE = 'Navindbhudiya_ProductRecommendation::config';
+    public const ADMIN_RESOURCE = 'NavinDBhudiya_ProductRecommendation::config';
 
     /**
      * @var JsonFactory

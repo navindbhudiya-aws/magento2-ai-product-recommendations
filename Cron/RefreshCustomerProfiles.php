@@ -1,16 +1,16 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Cron;
+namespace NavinDBhudiya\ProductRecommendation\Cron;
 
 use Magento\Framework\App\ResourceConnection;
-use Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
-use Navindbhudiya\ProductRecommendation\Model\ResourceModel\CustomerProfile as CustomerProfileResource;
+use NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Model\ResourceModel\CustomerProfile as CustomerProfileResource;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -111,12 +111,6 @@ class RefreshCustomerProfiles
                 );
             }
         }
-
-        if ($refreshedCount > 0 && $this->config->isDebugMode()) {
-            $this->logger->info(
-                '[ProductRecommendation] Refreshed ' . $refreshedCount . ' customer profiles'
-            );
-        }
     }
 
     /**
@@ -134,17 +128,10 @@ class RefreshCustomerProfiles
                 return;
             }
 
-            $deleted = $connection->delete(
+            $connection->delete(
                 $tableName,
                 ['expires_at < ?' => (new \DateTime())->format('Y-m-d H:i:s')]
             );
-
-            if ($deleted > 0 && $this->config->isDebugMode()) {
-                $this->logger->info(
-                    '[ProductRecommendation] Cleaned up ' . $deleted . ' expired recommendations'
-                );
-            }
-
         } catch (\Exception $e) {
             $this->logger->error(
                 '[ProductRecommendation] cleanupExpiredRecommendations error: ' . $e->getMessage()
@@ -168,18 +155,11 @@ class RefreshCustomerProfiles
             }
 
             $cutoff = (new \DateTime())->modify('-30 days')->format('Y-m-d H:i:s');
-            
-            $deleted = $connection->delete(
+
+            $connection->delete(
                 $tableName,
                 ['viewed_at < ?' => $cutoff]
             );
-
-            if ($deleted > 0 && $this->config->isDebugMode()) {
-                $this->logger->info(
-                    '[ProductRecommendation] Cleaned up ' . $deleted . ' old guest browsing records'
-                );
-            }
-
         } catch (\Exception $e) {
             $this->logger->error(
                 '[ProductRecommendation] cleanupOldGuestHistory error: ' . $e->getMessage()

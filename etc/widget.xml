@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  * Widget Configuration
  */
 -->
@@ -9,8 +9,8 @@
          xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
 
     <widget id="personalized_recommendations"
-            class="Navindbhudiya\ProductRecommendation\Block\Widget\PersonalizedRecommendations"
-            placeholder_image="Navindbhudiya_ProductRecommendation::images/widget_placeholder.png">
+            class="NavinDBhudiya\ProductRecommendation\Block\Widget\PersonalizedRecommendations"
+            placeholder_image="NavinDBhudiya_ProductRecommendation::images/widget_placeholder.png">
         <label translate="true">AI Personalized Recommendations</label>
         <description translate="true">Display AI-powered personalized product recommendations based on customer behavior</description>
         

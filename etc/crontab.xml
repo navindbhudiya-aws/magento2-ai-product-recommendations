@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
@@ -13,22 +13,22 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
     <group id="default">
         <job name="product_recommendation_sync_embeddings"
-             instance="Navindbhudiya\ProductRecommendation\Cron\SyncEmbeddings"
+             instance="NavinDBhudiya\ProductRecommendation\Cron\SyncEmbeddings"
              method="execute">
             <schedule>0 2 * * *</schedule>
         </job>
         <job name="product_recommendation_clean_cache"
-             instance="Navindbhudiya\ProductRecommendation\Cron\CleanCache"
+             instance="NavinDBhudiya\ProductRecommendation\Cron\CleanCache"
              method="execute">
             <schedule>0 3 * * *</schedule>
         </job>
         <job name="product_recommendation_refresh_profiles"
-             instance="Navindbhudiya\ProductRecommendation\Cron\RefreshCustomerProfiles"
+             instance="NavinDBhudiya\ProductRecommendation\Cron\RefreshCustomerProfiles"
              method="execute">
             <schedule>0 */6 * * *</schedule>
         </job>
         <job name="product_recommendation_refresh_trending"
-             instance="Navindbhudiya\ProductRecommendation\Cron\RefreshTrending"
+             instance="NavinDBhudiya\ProductRecommendation\Cron\RefreshTrending"
              method="execute">
             <schedule>0 4 * * *</schedule>
         </job>

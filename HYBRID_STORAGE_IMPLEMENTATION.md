@@ -95,7 +95,7 @@ if (!empty($results)) {
         try {
             $expiresAt = gmdate('Y-m-d H:i:s', $this->dateTime->gmtTimestamp() + $this->config->getCacheLifetime());
 
-            /** @var \Navindbhudiya\ProductRecommendation\Api\Data\LlmRankingInterface $ranking */
+            /** @var \NavinDBhudiya\ProductRecommendation\Api\Data\LlmRankingInterface $ranking */
             $ranking = $this->llmRankingFactory->create();
             $ranking->setCustomerId($customerId)
                 ->setProductId($productId)

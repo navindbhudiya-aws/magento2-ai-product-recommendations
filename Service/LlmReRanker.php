@@ -1,23 +1,23 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Service;
+namespace NavinDBhudiya\ProductRecommendation\Service;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface;
-use Navindbhudiya\ProductRecommendation\Api\LlmProviderInterface;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
-use Navindbhudiya\ProductRecommendation\Service\Llm\ClaudeProvider;
-use Navindbhudiya\ProductRecommendation\Service\Llm\OpenAiProvider;
+use NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface;
+use NavinDBhudiya\ProductRecommendation\Api\LlmProviderInterface;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Service\Llm\ClaudeProvider;
+use NavinDBhudiya\ProductRecommendation\Service\Llm\OpenAiProvider;
 use Psr\Log\LoggerInterface;
 
 /**

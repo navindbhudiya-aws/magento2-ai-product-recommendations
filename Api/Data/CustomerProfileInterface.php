@@ -1,11 +1,11 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Api\Data;
+namespace NavinDBhudiya\ProductRecommendation\Api\Data;
 
 /**
  * Interface for customer AI profile

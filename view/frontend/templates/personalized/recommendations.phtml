@@ -1,9 +1,9 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  * Personalized Recommendations Template
  *
- * @var \Navindbhudiya\ProductRecommendation\Block\Personalized\Recommendations $block
+ * @var \NavinDBhudiya\ProductRecommendation\Block\Personalized\Recommendations $block
  */
 
 $products = $block->getProducts();
@@ -17,7 +17,7 @@ $imageHelper = $block->getImage($products[0] ?? null, 'category_page_grid');
 ?>
 
 <div class="block block-personalized-recommendations block-<?= $block->escapeHtmlAttr($type) ?>"
-     data-mage-init='{"Navindbhudiya_ProductRecommendation/js/personalized-slider": {}}'>
+     data-mage-init='{"NavinDBhudiya_ProductRecommendation/js/personalized-slider": {}}'>
 
     <div class="block-title title">
         <strong id="block-<?= $block->escapeHtmlAttr($type) ?>-heading" role="heading" aria-level="2">

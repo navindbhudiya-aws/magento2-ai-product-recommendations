@@ -58,7 +58,7 @@
 
 ### Step 1: Configure in Admin
 ```
-Stores > Configuration > Navindbhudiya > AI Product Recommendation > LLM Re-Ranking
+Stores > Configuration > NavinDBhudiya > AI Product Recommendation > LLM Re-Ranking
 ```
 
 **Settings:**

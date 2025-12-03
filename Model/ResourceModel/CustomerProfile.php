@@ -1,11 +1,11 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Model\ResourceModel;
+namespace NavinDBhudiya\ProductRecommendation\Model\ResourceModel;
 
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
@@ -17,7 +17,7 @@ class CustomerProfile extends AbstractDb
     /**
      * Table name
      */
-    public const TABLE_NAME = 'ai_customer_profile';
+    public const TABLE_NAME = 'navindbhudiya_ai_customer_profile';
 
     /**
      * @inheritDoc

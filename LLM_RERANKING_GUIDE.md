@@ -181,7 +181,7 @@ Choose one provider (or configure both):
 
 1. Log in to Magento Admin
 2. Navigate to: **Stores > Configuration**
-3. Expand: **Navindbhudiya > AI Product Recommendation**
+3. Expand: **NavinDBhudiya > AI Product Recommendation**
 4. Scroll to: **LLM Re-Ranking** section
 
 #### **Configuration Fields:**
@@ -558,7 +558,7 @@ The LLM receives rich context about:
 ## 📞 Support
 
 **Logs Location:** `var/log/product_recommendation.log`
-**Config Path:** `Stores > Configuration > Navindbhudiya > AI Product Recommendation > LLM Re-Ranking`
+**Config Path:** `Stores > Configuration > NavinDBhudiya > AI Product Recommendation > LLM Re-Ranking`
 **Debug Mode:** `product_recommendation/general/debug_mode`
 
 **Common Commands:**
@@ -581,4 +581,4 @@ bin/magento config:set product_recommendation/general/debug_mode 1
 **Happy Re-Ranking! 🎉**
 
 Generated: 2025-11-30
-Module: Navindbhudiya_ProductRecommendation v2.1.0
+Module: NavinDBhudiya_ProductRecommendation v2.1.0

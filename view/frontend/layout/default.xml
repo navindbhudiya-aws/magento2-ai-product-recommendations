@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  * Default layout - adds personalized recommendations to all pages
  */
 -->
@@ -9,15 +9,15 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     
     <head>
-        <css src="Navindbhudiya_ProductRecommendation::css/personalized.css"/>
+        <css src="NavinDBhudiya_ProductRecommendation::css/personalized.css"/>
     </head>
     
     <body>
         <!-- Just For You - Bottom of page content -->
         <referenceContainer name="content.bottom">
-            <block class="Navindbhudiya\ProductRecommendation\Block\Personalized\Recommendations"
+            <block class="NavinDBhudiya\ProductRecommendation\Block\Personalized\Recommendations"
                    name="personalized.just.for.you"
-                   template="Navindbhudiya_ProductRecommendation::personalized/recommendations.phtml"
+                   template="NavinDBhudiya_ProductRecommendation::personalized/recommendations.phtml"
                    after="-">
                 <arguments>
                     <argument name="recommendation_type" xsi:type="string">just_for_you</argument>

@@ -1,16 +1,16 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Block\Adminhtml\System\Config;
+namespace NavinDBhudiya\ProductRecommendation\Block\Adminhtml\System\Config;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Config\Block\System\Config\Form\Field;
@@ -24,7 +24,7 @@ class TestConnection extends Field
     /**
      * @var string
      */
-    protected $_template = 'Navindbhudiya_ProductRecommendation::system/config/test_connection.phtml';
+    protected $_template = 'NavinDBhudiya_ProductRecommendation::system/config/test_connection.phtml';
 
     /**
      * Remove scope label

@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
@@ -15,21 +15,21 @@
     <!-- Plugin to override related products -->
     <type name="Magento\Catalog\Block\Product\ProductList\Related">
         <plugin name="ai_recommendation_related"
-                type="Navindbhudiya\ProductRecommendation\Plugin\Product\RelatedProducts"
+                type="NavinDBhudiya\ProductRecommendation\Plugin\Product\RelatedProducts"
                 sortOrder="10"/>
     </type>
 
     <!-- Plugin to override upsell products -->
     <type name="Magento\Catalog\Block\Product\ProductList\Upsell">
         <plugin name="ai_recommendation_upsell"
-                type="Navindbhudiya\ProductRecommendation\Plugin\Product\UpsellProducts"
+                type="NavinDBhudiya\ProductRecommendation\Plugin\Product\UpsellProducts"
                 sortOrder="10"/>
     </type>
 
     <!-- Plugin to override crosssell products -->
     <type name="Magento\Checkout\Block\Cart\Crosssell">
         <plugin name="ai_recommendation_crosssell"
-                type="Navindbhudiya\ProductRecommendation\Plugin\Checkout\CrosssellProducts"
+                type="NavinDBhudiya\ProductRecommendation\Plugin\Checkout\CrosssellProducts"
                 sortOrder="10"/>
     </type>
 

@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is a Magento 2 module (`Navindbhudiya_ProductRecommendation`) that provides AI-powered product recommendations using ChromaDB vector database. The module uses semantic similarity search to automatically generate related, cross-sell, and up-sell product recommendations.
+This is a Magento 2 module (`NavinDBhudiya_ProductRecommendation`) that provides AI-powered product recommendations using ChromaDB vector database. The module uses semantic similarity search to automatically generate related, cross-sell, and up-sell product recommendations.
 
 ## Tech Stack
 
@@ -25,7 +25,7 @@ The flow is:
 ## Directory Structure
 
 ```
-Navindbhudiya/ProductRecommendation/
+NavinDBhudiya/ProductRecommendation/
 ├── Api/                          # Service contracts (interfaces)
 ├── Block/Adminhtml/              # Admin UI blocks
 ├── Console/Command/              # CLI commands
@@ -76,7 +76,7 @@ docker logs $(docker ps -qf name=embedding) -f
 4. Install module:
 ```bash
 warden shell
-bin/magento module:enable Navindbhudiya_ProductRecommendation
+bin/magento module:enable NavinDBhudiya_ProductRecommendation
 bin/magento setup:upgrade
 bin/magento setup:di:compile
 bin/magento cache:flush
@@ -110,7 +110,7 @@ services:
   embedding-service:
     container_name: ${WARDEN_ENV_NAME}_embedding
     build:
-      context: ./app/code/Navindbhudiya/ProductRecommendation/docker/embedding-service
+      context: ./app/code/NavinDBhudiya/ProductRecommendation/docker/embedding-service
       dockerfile: Dockerfile
     restart: unless-stopped
     labels:
@@ -205,7 +205,7 @@ The embedding service processes texts sequentially. For large catalogs:
 ## Key Configuration
 
 ### Admin Settings
-`Stores > Configuration > Navindbhudiya > AI Product Recommendation`
+`Stores > Configuration > NavinDBhudiya > AI Product Recommendation`
 
 ### Config Paths
 ```

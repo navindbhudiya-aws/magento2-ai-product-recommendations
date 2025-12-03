@@ -41,7 +41,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Navindbhudiya\\ProductRecommendation\\": ""
+            "NavinDBhudiya\\ProductRecommendation\\": ""
         }
     },
     "minimum-stability": "stable",

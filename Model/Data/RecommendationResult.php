@@ -1,20 +1,20 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Model\Data;
+namespace NavinDBhudiya\ProductRecommendation\Model\Data;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\DataObject;
-use Navindbhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface;
+use NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterface;
 
 /**
  * Recommendation result data model

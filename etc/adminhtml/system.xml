@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
@@ -13,14 +13,14 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <tab id="navindbhudiya" translate="label" sortOrder="500">
-            <label>Navindbhudiya</label>
+            <label>NavinDBhudiya</label>
         </tab>
 
         <section id="product_recommendation" translate="label" sortOrder="10"
                  showInDefault="1" showInWebsite="1" showInStore="1">
             <label>AI Product Recommendation</label>
             <tab>navindbhudiya</tab>
-            <resource>Navindbhudiya_ProductRecommendation::config</resource>
+            <resource>NavinDBhudiya_ProductRecommendation::config</resource>
 
             <!-- General Settings -->
             <group id="general" translate="label" sortOrder="10"
@@ -71,7 +71,7 @@
                 <field id="test_connection" translate="label" type="button" sortOrder="40"
                        showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Test Connection</label>
-                    <frontend_model>Navindbhudiya\ProductRecommendation\Block\Adminhtml\System\Config\TestConnection</frontend_model>
+                    <frontend_model>NavinDBhudiya\ProductRecommendation\Block\Adminhtml\System\Config\TestConnection</frontend_model>
                 </field>
             </group>
 
@@ -83,7 +83,7 @@
                 <field id="provider" translate="label comment" type="select" sortOrder="10"
                        showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Embedding Provider</label>
-                    <source_model>Navindbhudiya\ProductRecommendation\Model\Config\Source\EmbeddingProvider</source_model>
+                    <source_model>NavinDBhudiya\ProductRecommendation\Model\Config\Source\EmbeddingProvider</source_model>
                     <comment>Embedding provider: ChromaDB with all-MiniLM-L6-v2 model (384 dimensions)</comment>
                 </field>
 
@@ -91,7 +91,7 @@
                 <field id="product_attributes" translate="label comment" type="multiselect" sortOrder="50"
                        showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Product Attributes</label>
-                    <source_model>Navindbhudiya\ProductRecommendation\Model\Config\Source\ProductAttributes</source_model>
+                    <source_model>NavinDBhudiya\ProductRecommendation\Model\Config\Source\ProductAttributes</source_model>
                     <comment>Select product attributes to include in embedding generation</comment>
                     <can_be_empty>0</can_be_empty>
                 </field>
@@ -329,21 +329,21 @@
             <!-- LLM Re-Ranking Configuration -->
             <group id="llm_reranking" translate="label comment" sortOrder="80"
                    showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>LLM Re-Ranking (AI Enhancement)</label>
-                <comment><![CDATA[Use Claude or GPT-4 to intelligently re-rank product recommendations for better relevance and conversion. This adds a second layer of AI reasoning on top of vector similarity.]]></comment>
+                <label>Claude AI Re-Ranking</label>
+                <comment><![CDATA[Use Anthropic Claude to intelligently re-rank product recommendations for better relevance and conversion. This adds a second layer of AI reasoning on top of vector similarity.]]></comment>
 
                 <field id="enabled" translate="label comment" type="select" sortOrder="10"
                        showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Enable LLM Re-Ranking</label>
+                    <label>Enable Claude Re-Ranking</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment><![CDATA[Enable intelligent re-ranking using Large Language Models (Claude or GPT-4). Requires API key.]]></comment>
+                    <comment><![CDATA[Enable intelligent re-ranking using Anthropic Claude. Requires API key from console.anthropic.com.]]></comment>
                 </field>
 
                 <field id="provider" translate="label comment" type="select" sortOrder="20"
                        showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>LLM Provider</label>
-                    <source_model>Navindbhudiya\ProductRecommendation\Model\Config\Source\LlmProvider</source_model>
-                    <comment><![CDATA[Choose your preferred AI provider. Claude is recommended for better e-commerce understanding.]]></comment>
+                    <source_model>NavinDBhudiya\ProductRecommendation\Model\Config\Source\LlmProvider</source_model>
+                    <comment><![CDATA[Uses Anthropic Claude AI for intelligent product recommendations.]]></comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
@@ -351,9 +351,9 @@
 
                 <field id="api_key" translate="label comment" type="obscure" sortOrder="30"
                        showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>API Key</label>
+                    <label>Anthropic API Key</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                    <comment><![CDATA[Your API key from Anthropic (Claude) or OpenAI (GPT-4). Get Claude API key: <a href="https://console.anthropic.com" target="_blank">https://console.anthropic.com</a>. Get OpenAI API key: <a href="https://platform.openai.com/api-keys" target="_blank">https://platform.openai.com/api-keys</a>]]></comment>
+                    <comment><![CDATA[Your API key from Anthropic Claude. Get your API key: <a href="https://console.anthropic.com" target="_blank">https://console.anthropic.com</a>]]></comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
@@ -361,9 +361,9 @@
 
                 <field id="model" translate="label comment" type="select" sortOrder="40"
                        showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Model</label>
-                    <source_model>Navindbhudiya\ProductRecommendation\Model\Config\Source\LlmModel</source_model>
-                    <comment><![CDATA[Select the specific model to use. Leave empty to use provider defaults (Claude 3.5 Sonnet or GPT-4 Turbo).]]></comment>
+                    <label>Claude Model</label>
+                    <source_model>NavinDBhudiya\ProductRecommendation\Model\Config\Source\LlmModel</source_model>
+                    <comment><![CDATA[Sonnet 4.5 recommended for most use cases. Opus 4.5 for maximum intelligence. Haiku 4.5 for fastest performance. All models support 200K context.]]></comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>

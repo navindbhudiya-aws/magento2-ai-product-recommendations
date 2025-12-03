@@ -1,16 +1,16 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Service;
+namespace NavinDBhudiya\ProductRecommendation\Service;
 
 use Magento\Framework\App\CacheInterface;
 use Psr\Log\LoggerInterface;
@@ -94,12 +94,6 @@ class CircuitBreaker
             self::TIMEOUT_DURATION
         );
 
-        $this->logger->info('[ProductRecommendation][CircuitBreaker] Recorded failure for service: ' . $service, [
-            'failures' => $failures,
-            'threshold' => self::FAILURE_THRESHOLD,
-            'service' => $service
-        ]);
-
         if ($failures >= self::FAILURE_THRESHOLD) {
             $this->logger->error('[ProductRecommendation][CircuitBreaker] Circuit OPENED for service: ' . $service, [
                 'failures' => $failures,
@@ -119,10 +113,6 @@ class CircuitBreaker
     {
         $key = $this->getFailureKey($service);
         $this->cache->remove($key);
-
-        $this->logger->info('[ProductRecommendation][CircuitBreaker] Circuit RESET for service: ' . $service, [
-            'service' => $service
-        ]);
     }
 
     /**

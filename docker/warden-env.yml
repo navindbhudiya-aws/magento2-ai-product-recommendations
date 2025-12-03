@@ -49,7 +49,7 @@ services:
   embedding-service:
     container_name: ${WARDEN_ENV_NAME}_embedding
     build:
-      context: ./app/code/Navindbhudiya/ProductRecommendation/docker/embedding-service
+      context: ./app/code/NavinDBhudiya/ProductRecommendation/docker/embedding-service
       dockerfile: Dockerfile
     restart: unless-stopped
     labels:

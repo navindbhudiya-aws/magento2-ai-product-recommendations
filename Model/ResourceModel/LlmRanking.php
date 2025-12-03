@@ -1,16 +1,16 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Model\ResourceModel;
+namespace NavinDBhudiya\ProductRecommendation\Model\ResourceModel;
 
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
@@ -24,7 +24,7 @@ class LlmRanking extends AbstractDb
      */
     protected function _construct()
     {
-        $this->_init('product_recommendation_llm_ranking', 'id');
+        $this->_init('navindbhudiya_product_recommendation_llm_ranking', 'id');
     }
 
     /**

@@ -1,5 +1,5 @@
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  * Personalized Products Slider JavaScript
  */
 define([

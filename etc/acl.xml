@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
- * @category  Navindbhudiya
- * @package   Navindbhudiya_ProductRecommendation
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
  * @author    Navin Bhudiya
  * @license   MIT License
  */
@@ -17,20 +17,20 @@
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="Navindbhudiya_ProductRecommendation::config"
+                            <resource id="NavinDBhudiya_ProductRecommendation::config"
                                       title="AI Product Recommendation Configuration"
                                       sortOrder="100"/>
                         </resource>
                     </resource>
                 </resource>
                 <resource id="Magento_Catalog::catalog">
-                    <resource id="Navindbhudiya_ProductRecommendation::recommendation"
+                    <resource id="NavinDBhudiya_ProductRecommendation::recommendation"
                               title="AI Product Recommendations"
                               sortOrder="50">
-                        <resource id="Navindbhudiya_ProductRecommendation::index"
+                        <resource id="NavinDBhudiya_ProductRecommendation::index"
                                   title="Manage Recommendations"
                                   sortOrder="10"/>
-                        <resource id="Navindbhudiya_ProductRecommendation::reindex"
+                        <resource id="NavinDBhudiya_ProductRecommendation::reindex"
                                   title="Reindex Embeddings"
                                   sortOrder="20"/>
                     </resource>

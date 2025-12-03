@@ -1,17 +1,17 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Service\BehaviorCollector;
+namespace NavinDBhudiya\ProductRecommendation\Service\BehaviorCollector;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\StoreManagerInterface;
-use Navindbhudiya\ProductRecommendation\Api\BehaviorCollectorInterface;
-use Navindbhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
+use NavinDBhudiya\ProductRecommendation\Api\BehaviorCollectorInterface;
+use NavinDBhudiya\ProductRecommendation\Api\PersonalizedRecommendationInterface;
 use Psr\Log\LoggerInterface;
 
 /**

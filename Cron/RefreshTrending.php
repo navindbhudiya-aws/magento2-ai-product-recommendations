@@ -1,17 +1,17 @@
 <?php
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  *
  * Cron job to refresh trending products cache
  */
 
 declare(strict_types=1);
 
-namespace Navindbhudiya\ProductRecommendation\Cron;
+namespace NavinDBhudiya\ProductRecommendation\Cron;
 
 use Magento\Store\Model\StoreManagerInterface;
-use Navindbhudiya\ProductRecommendation\Service\TrendingBooster;
-use Navindbhudiya\ProductRecommendation\Helper\Config;
+use NavinDBhudiya\ProductRecommendation\Service\TrendingBooster;
+use NavinDBhudiya\ProductRecommendation\Helper\Config;
 use Psr\Log\LoggerInterface;
 
 class RefreshTrending
@@ -35,28 +35,20 @@ class RefreshTrending
 
     public function execute(): void
     {
-        $this->logger->info('[ProductRecommendation] Starting trending refresh cron');
-
         $stores = $this->storeManager->getStores();
-        $total = 0;
 
         foreach ($stores as $store) {
             $storeId = (int) $store->getId();
-            
+
             if (!$this->config->isEnabled($storeId)) {
                 continue;
             }
 
             try {
-                $count = $this->trendingBooster->refreshTrendingCache($storeId, 7);
-                $total += $count;
-                
-                $this->logger->info("[ProductRecommendation] Store {$storeId}: {$count} trending products");
+                $this->trendingBooster->refreshTrendingCache($storeId, 7);
             } catch (\Exception $e) {
                 $this->logger->error("[ProductRecommendation] Error for store {$storeId}: " . $e->getMessage());
             }
         }
-
-        $this->logger->info("[ProductRecommendation] Trending refresh done. Total: {$total}");
     }
 }

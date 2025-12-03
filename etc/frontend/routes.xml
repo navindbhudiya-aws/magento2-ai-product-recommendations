@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Navindbhudiya ProductRecommendation
+ * NavinDBhudiya ProductRecommendation
  * Frontend routes configuration
  */
 -->
@@ -9,7 +9,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="standard">
         <route id="productrecommendation" frontName="productrecommendation">
-            <module name="Navindbhudiya_ProductRecommendation"/>
+            <module name="NavinDBhudiya_ProductRecommendation"/>
         </route>
     </router>
 </config>

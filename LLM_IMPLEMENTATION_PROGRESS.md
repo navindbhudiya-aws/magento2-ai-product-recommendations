@@ -140,7 +140,7 @@
 
 ## 🔧 Configuration Example
 
-**Admin Path:** `Stores > Configuration > Navindbhudiya > AI Product Recommendation > LLM Re-Ranking`
+**Admin Path:** `Stores > Configuration > NavinDBhudiya > AI Product Recommendation > LLM Re-Ranking`
 
 ```
 Enable LLM Re-Ranking: Yes
