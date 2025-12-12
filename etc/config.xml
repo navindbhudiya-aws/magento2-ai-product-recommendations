@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NavinDBhudiya ProductRecommendation
+ *
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
+ * @author    Navin Bhudiya
+ * @license   MIT License
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <product_recommendation>
+            <!-- General Settings -->
+            <general>
+                <enabled>1</enabled>
+                <debug_mode>0</debug_mode>
+            </general>
+
+            <!-- ChromaDB Configuration -->
+            <chromadb>
+                <host>chromadb</host>
+                <port>8000</port>
+                <collection_name>magento_products</collection_name>
+            </chromadb>
+
+            <!-- Embedding Configuration -->
+            <embedding>
+                <provider>chromadb</provider>
+                <product_attributes>name,short_description,description,meta_keywords</product_attributes>
+                <include_categories>1</include_categories>
+            </embedding>
+
+            <!-- Recommendation Settings -->
+            <recommendation>
+                <related_enabled>1</related_enabled>
+                <related_count>4</related_count>
+                <crosssell_enabled>1</crosssell_enabled>
+                <crosssell_count>4</crosssell_count>
+                <upsell_enabled>1</upsell_enabled>
+                <upsell_count>4</upsell_count>
+                <similarity_threshold>0.5</similarity_threshold>
+                <exclude_same_category>1</exclude_same_category>
+                <upsell_price_threshold>10</upsell_price_threshold>
+                <fallback_to_native>1</fallback_to_native>
+            </recommendation>
+
+            <!-- Cache Settings -->
+            <cache>
+                <enabled>1</enabled>
+                <lifetime>3600</lifetime>
+            </cache>
+
+            <!-- Personalized Recommendations -->
+            <personalized>
+                <browsing_enabled>1</browsing_enabled>
+                <browsing_limit>8</browsing_limit>
+                <purchase_enabled>1</purchase_enabled>
+                <purchase_limit>8</purchase_limit>
+                <wishlist_enabled>1</wishlist_enabled>
+                <wishlist_limit>8</wishlist_limit>
+                <justforyou_enabled>1</justforyou_enabled>
+                <justforyou_limit>12</justforyou_limit>
+                <weight_wishlist>40</weight_wishlist>
+                <weight_purchase>35</weight_purchase>
+                <weight_browsing>25</weight_browsing>
+                <min_history_items>2</min_history_items>
+                <show_on_homepage>1</show_on_homepage>
+                <show_on_category>0</show_on_category>
+                <show_on_product>1</show_on_product>
+            </personalized>
+
+            <!-- Claude AI Re-Ranking (Disabled by Default) -->
+            <llm_reranking>
+                <enabled>0</enabled>
+                <provider>claude</provider>
+                <model>claude-sonnet-4-5-20250929</model>
+                <temperature>0.7</temperature>
+                <candidate_count>20</candidate_count>
+            </llm_reranking>
+        </product_recommendation>
+    </default>
+</config>

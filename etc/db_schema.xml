@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NavinDBhudiya ProductRecommendation
+ * Database schema for personalized recommendations
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+
+    <!-- Customer AI Profile Table -->
+    <table name="navindbhudiya_ai_customer_profile" resource="default" engine="innodb" comment="AI Customer Behavior Profiles">
+        <column xsi:type="int" name="profile_id" unsigned="true" nullable="false" identity="true" comment="Profile ID"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" comment="Customer ID"/>
+        <column xsi:type="varchar" name="profile_type" nullable="false" length="50" comment="Profile Type (browsing, purchase, wishlist, combined)"/>
+        <column xsi:type="mediumtext" name="embedding_vector" nullable="true" comment="JSON encoded embedding vector"/>
+        <column xsi:type="text" name="source_product_ids" nullable="true" comment="Product IDs used to generate profile"/>
+        <column xsi:type="int" name="product_count" unsigned="true" nullable="false" default="0" comment="Number of products in profile"/>
+        <column xsi:type="int" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="profile_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="NAVINDBHUDIYA_AI_CUSTOMER_PROFILE_CUSTOMER_TYPE_STORE">
+            <column name="customer_id"/>
+            <column name="profile_type"/>
+            <column name="store_id"/>
+        </constraint>
+        <index referenceId="NAVINDBHUDIYA_AI_CUSTOMER_PROFILE_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+        <index referenceId="NAVINDBHUDIYA_AI_CUSTOMER_PROFILE_PROFILE_TYPE" indexType="btree">
+            <column name="profile_type"/>
+        </index>
+        <index referenceId="NAVINDBHUDIYA_AI_CUSTOMER_PROFILE_UPDATED_AT" indexType="btree">
+            <column name="updated_at"/>
+        </index>
+    </table>
+
+    <!-- Cached Personalized Recommendations Table -->
+    <table name="navindbhudiya_ai_personalized_recommendations" resource="default" engine="innodb" comment="Cached Personalized Recommendations">
+        <column xsi:type="int" name="recommendation_id" unsigned="true" nullable="false" identity="true" comment="Recommendation ID"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" comment="Customer ID"/>
+        <column xsi:type="varchar" name="recommendation_type" nullable="false" length="50" comment="Recommendation Type"/>
+        <column xsi:type="text" name="product_ids" nullable="true" comment="Comma-separated recommended product IDs"/>
+        <column xsi:type="text" name="scores" nullable="true" comment="JSON encoded similarity scores"/>
+        <column xsi:type="int" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="expires_at" on_update="false" nullable="true" comment="Expiration Time"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="recommendation_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="NAVINDBHUDIYA_AI_PERSONALIZED_REC_CUSTOMER_TYPE_STORE">
+            <column name="customer_id"/>
+            <column name="recommendation_type"/>
+            <column name="store_id"/>
+        </constraint>
+        <index referenceId="NAVINDBHUDIYA_AI_PERSONALIZED_REC_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+        <index referenceId="NAVINDBHUDIYA_AI_PERSONALIZED_REC_EXPIRES_AT" indexType="btree">
+            <column name="expires_at"/>
+        </index>
+    </table>
+
+    <!-- Guest Session Profiles (for non-logged in users) -->
+    <table name="navindbhudiya_ai_guest_browsing_history" resource="default" engine="innodb" comment="Guest Browsing History">
+        <column xsi:type="int" name="history_id" unsigned="true" nullable="false" identity="true" comment="History ID"/>
+        <column xsi:type="varchar" name="session_id" nullable="false" length="255" comment="Session ID"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" comment="Product ID"/>
+        <column xsi:type="int" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="timestamp" name="viewed_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Viewed At"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="history_id"/>
+        </constraint>
+        <index referenceId="NAVINDBHUDIYA_AI_GUEST_BROWSING_SESSION_ID" indexType="btree">
+            <column name="session_id"/>
+        </index>
+        <index referenceId="NAVINDBHUDIYA_AI_GUEST_BROWSING_VIEWED_AT" indexType="btree">
+            <column name="viewed_at"/>
+        </index>
+    </table>
+
+    <!-- Trending Products Cache -->
+    <table name="navindbhudiya_ai_trending_products" resource="default" engine="innodb" comment="Trending Products Cache">
+        <column xsi:type="int" name="trending_id" unsigned="true" nullable="false" identity="true" comment="Trending ID"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" comment="Product ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="decimal" name="trend_score" scale="6" precision="12" nullable="false" default="0" comment="Normalized Trend Score"/>
+        <column xsi:type="int" name="sales_count" unsigned="true" nullable="false" default="0" comment="Sales Count"/>
+        <column xsi:type="int" name="period_days" unsigned="true" nullable="false" default="7" comment="Period Days"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="trending_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="NAVINDBHUDIYA_AI_TRENDING_PRODUCT_STORE_PERIOD">
+            <column name="product_id"/>
+            <column name="store_id"/>
+            <column name="period_days"/>
+        </constraint>
+        <index referenceId="NAVINDBHUDIYA_AI_TRENDING_SCORE" indexType="btree">
+            <column name="trend_score"/>
+        </index>
+    </table>
+
+    <!-- LLM Re-Ranking Storage Table -->
+    <table name="navindbhudiya_product_recommendation_llm_ranking" resource="default" engine="innodb"
+           comment="AI Product Recommendation LLM Re-Ranking Results">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true"
+                comment="Ranking ID"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="true"
+                comment="Customer ID (NULL for guest/default rankings)"/>
+        <column xsi:type="int" name="product_id" unsigned="false" nullable="false"
+                comment="Source Product ID"/>
+        <column xsi:type="varchar" name="recommendation_type" nullable="false" length="50"
+                comment="Recommendation Type (related, cross-sell, upsell)"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0"
+                comment="Store ID"/>
+        <column xsi:type="text" name="ranked_product_ids" nullable="false"
+                comment="JSON array of ranked product IDs in order"/>
+        <column xsi:type="text" name="ranking_metadata" nullable="true"
+                comment="JSON metadata (model used, cost, tokens, etc.)"/>
+        <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Created At"/>
+        <column xsi:type="timestamp" name="expires_at" nullable="false"
+                comment="Expiration Timestamp"/>
+        <column xsi:type="varchar" name="model_used" nullable="true" length="100"
+                comment="LLM Model Used"/>
+        <column xsi:type="decimal" name="estimated_cost" scale="6" precision="10" nullable="true"
+                comment="Estimated API Cost in USD"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+
+        <index referenceId="NAVINDBHUDIYA_PROD_REC_LLM_RANKING_CUSTOMER_PRODUCT_TYPE_STORE" indexType="btree">
+            <column name="customer_id"/>
+            <column name="product_id"/>
+            <column name="recommendation_type"/>
+            <column name="store_id"/>
+        </index>
+
+        <index referenceId="NAVINDBHUDIYA_PROD_REC_LLM_RANKING_PRODUCT_TYPE_STORE" indexType="btree">
+            <column name="product_id"/>
+            <column name="recommendation_type"/>
+            <column name="store_id"/>
+        </index>
+
+        <index referenceId="NAVINDBHUDIYA_PROD_REC_LLM_RANKING_EXPIRES_AT" indexType="btree">
+            <column name="expires_at"/>
+        </index>
+
+        <index referenceId="NAVINDBHUDIYA_PROD_REC_LLM_RANKING_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+
+        <constraint xsi:type="foreign" referenceId="NAVINDBHUDIYA_PROD_REC_LLM_RANK_CUSTOMER_ID_CUSTOMER_ENTITY"
+                    table="navindbhudiya_product_recommendation_llm_ranking" column="customer_id"
+                    referenceTable="customer_entity" referenceColumn="entity_id" onDelete="CASCADE"/>
+
+        <constraint xsi:type="foreign" referenceId="NAVINDBHUDIYA_PROD_REC_LLM_RANK_STORE_ID_STORE_STORE_ID"
+                    table="navindbhudiya_product_recommendation_llm_ranking" column="store_id"
+                    referenceTable="store" referenceColumn="store_id" onDelete="CASCADE"/>
+    </table>
+
+</schema>

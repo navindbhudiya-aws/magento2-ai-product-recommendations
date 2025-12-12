@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NavinDBhudiya ProductRecommendation
+ *
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
+ * @author    Navin Bhudiya
+ * @license   MIT License
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="product_recommendation_sync_embeddings"
+             instance="NavinDBhudiya\ProductRecommendation\Cron\SyncEmbeddings"
+             method="execute">
+            <schedule>0 2 * * *</schedule>
+        </job>
+        <job name="product_recommendation_clean_cache"
+             instance="NavinDBhudiya\ProductRecommendation\Cron\CleanCache"
+             method="execute">
+            <schedule>0 3 * * *</schedule>
+        </job>
+        <job name="product_recommendation_refresh_profiles"
+             instance="NavinDBhudiya\ProductRecommendation\Cron\RefreshCustomerProfiles"
+             method="execute">
+            <schedule>0 */6 * * *</schedule>
+        </job>
+        <job name="product_recommendation_refresh_trending"
+             instance="NavinDBhudiya\ProductRecommendation\Cron\RefreshTrending"
+             method="execute">
+            <schedule>0 4 * * *</schedule>
+        </job>
+    </group>
+</config>

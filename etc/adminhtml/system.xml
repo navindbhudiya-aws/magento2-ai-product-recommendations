@@ -1,0 +1,394 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NavinDBhudiya ProductRecommendation
+ *
+ * @category  NavinDBhudiya
+ * @package   NavinDBhudiya_ProductRecommendation
+ * @author    Navin Bhudiya
+ * @license   MIT License
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="navindbhudiya" translate="label" sortOrder="500">
+            <label>NavinDBhudiya</label>
+        </tab>
+
+        <section id="product_recommendation" translate="label" sortOrder="10"
+                 showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>AI Product Recommendation</label>
+            <tab>navindbhudiya</tab>
+            <resource>NavinDBhudiya_ProductRecommendation::config</resource>
+
+            <!-- General Settings -->
+            <group id="general" translate="label" sortOrder="10"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General Settings</label>
+
+                <field id="enabled" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Module</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable or disable AI Product Recommendations</comment>
+                </field>
+
+                <field id="debug_mode" translate="label comment" type="select" sortOrder="20"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Debug Mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable debug logging for troubleshooting</comment>
+                </field>
+            </group>
+
+            <!-- ChromaDB Settings -->
+            <group id="chromadb" translate="label" sortOrder="20"
+                   showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>ChromaDB Configuration</label>
+
+                <field id="host" translate="label comment" type="text" sortOrder="10"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>ChromaDB Host</label>
+                    <comment>ChromaDB server hostname (e.g., chromadb or localhost)</comment>
+                    <validate>required-entry</validate>
+                </field>
+
+                <field id="port" translate="label comment" type="text" sortOrder="20"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>ChromaDB Port</label>
+                    <comment>ChromaDB server port (default: 8000)</comment>
+                    <validate>required-entry validate-digits</validate>
+                </field>
+
+                <field id="collection_name" translate="label comment" type="text" sortOrder="30"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Collection Name</label>
+                    <comment>Name of the ChromaDB collection for product embeddings</comment>
+                    <validate>required-entry</validate>
+                </field>
+
+                <field id="test_connection" translate="label" type="button" sortOrder="40"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Test Connection</label>
+                    <frontend_model>NavinDBhudiya\ProductRecommendation\Block\Adminhtml\System\Config\TestConnection</frontend_model>
+                </field>
+            </group>
+
+            <!-- Embedding Provider Settings -->
+            <group id="embedding" translate="label" sortOrder="30"
+                   showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Embedding Configuration</label>
+
+                <field id="provider" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Embedding Provider</label>
+                    <source_model>NavinDBhudiya\ProductRecommendation\Model\Config\Source\EmbeddingProvider</source_model>
+                    <comment>Embedding provider: ChromaDB with all-MiniLM-L6-v2 model (384 dimensions)</comment>
+                </field>
+
+                <!-- Product Attributes for Embedding -->
+                <field id="product_attributes" translate="label comment" type="multiselect" sortOrder="50"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Product Attributes</label>
+                    <source_model>NavinDBhudiya\ProductRecommendation\Model\Config\Source\ProductAttributes</source_model>
+                    <comment>Select product attributes to include in embedding generation</comment>
+                    <can_be_empty>0</can_be_empty>
+                </field>
+
+                <field id="include_categories" translate="label comment" type="select" sortOrder="60"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Include Category Names</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Include product category names in embedding text</comment>
+                </field>
+            </group>
+
+            <!-- Recommendation Settings -->
+            <group id="recommendation" translate="label" sortOrder="40"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Recommendation Settings</label>
+
+                <field id="related_enabled" translate="label" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable AI Related Products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="related_count" translate="label comment" type="text" sortOrder="15"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Related Products Count</label>
+                    <comment>Maximum number of AI-recommended related products</comment>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="related_enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="crosssell_enabled" translate="label" type="select" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable AI Cross-sell Products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="crosssell_count" translate="label comment" type="text" sortOrder="25"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Cross-sell Products Count</label>
+                    <comment>Maximum number of AI-recommended cross-sell products</comment>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="crosssell_enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="upsell_enabled" translate="label" type="select" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable AI Up-sell Products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="upsell_count" translate="label comment" type="text" sortOrder="35"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Up-sell Products Count</label>
+                    <comment>Maximum number of AI-recommended up-sell products</comment>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="upsell_enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="similarity_threshold" translate="label comment" type="text" sortOrder="40"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Similarity Threshold</label>
+                    <comment>Minimum similarity score (0.0 - 1.0) for recommendations. Higher = more relevant but fewer results.</comment>
+                    <validate>validate-number</validate>
+                </field>
+
+                <field id="exclude_same_category" translate="label comment" type="select" sortOrder="50"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Cross-sell: Exclude Same Category</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>For cross-sell, exclude products from the same category</comment>
+                </field>
+
+                <field id="upsell_price_threshold" translate="label comment" type="text" sortOrder="60"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Up-sell Price Threshold (%)</label>
+                    <comment>For up-sell, only show products with price higher by this percentage</comment>
+                    <validate>validate-digits</validate>
+                </field>
+
+                <field id="fallback_to_native" translate="label comment" type="select" sortOrder="70"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Fallback to Native</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>If AI recommendations are unavailable, show native Magento recommendations</comment>
+                </field>
+            </group>
+
+            <!-- Cache Settings -->
+            <group id="cache" translate="label" sortOrder="50"
+                   showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Cache Settings</label>
+
+                <field id="enabled" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Recommendation Cache</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Cache AI recommendations to improve performance</comment>
+                </field>
+
+                <field id="lifetime" translate="label comment" type="text" sortOrder="20"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Cache Lifetime (seconds)</label>
+                    <comment>How long to cache recommendations (default: 3600 = 1 hour)</comment>
+                    <validate>validate-digits</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <!-- Personalized Recommendations Settings -->
+            <group id="personalized" translate="label" sortOrder="60"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Personalized Recommendations</label>
+                <comment><![CDATA[<strong>Configure AI-powered personalized recommendations based on customer behavior</strong>]]></comment>
+
+                <field id="browsing_enabled" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable "Inspired by Browsing"</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Show recommendations based on customer's browsing history</comment>
+                </field>
+
+                <field id="browsing_limit" translate="label" type="text" sortOrder="15"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Browsing Recommendations Count</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="browsing_enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="purchase_enabled" translate="label comment" type="select" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable "Based on Past Purchases"</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Show recommendations based on customer's purchase history (logged-in only)</comment>
+                </field>
+
+                <field id="purchase_limit" translate="label" type="text" sortOrder="25"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Purchase Recommendations Count</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="purchase_enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="wishlist_enabled" translate="label comment" type="select" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable "Inspired by Wishlist"</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Show recommendations based on customer's wishlist items (logged-in only)</comment>
+                </field>
+
+                <field id="wishlist_limit" translate="label" type="text" sortOrder="35"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Wishlist Recommendations Count</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="wishlist_enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="justforyou_enabled" translate="label comment" type="select" sortOrder="40"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable "Just For You"</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Show combined personalized recommendations (browsing + purchases + wishlist)</comment>
+                </field>
+
+                <field id="justforyou_limit" translate="label" type="text" sortOrder="45"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Just For You Count</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="justforyou_enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="weight_wishlist" translate="label comment" type="text" sortOrder="50"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Wishlist Weight (%)</label>
+                    <comment>Weight for wishlist in "Just For You" calculation (default: 40)</comment>
+                    <validate>validate-digits</validate>
+                </field>
+
+                <field id="weight_purchase" translate="label comment" type="text" sortOrder="55"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Purchase Weight (%)</label>
+                    <comment>Weight for purchases in "Just For You" calculation (default: 35)</comment>
+                    <validate>validate-digits</validate>
+                </field>
+
+                <field id="weight_browsing" translate="label comment" type="text" sortOrder="60"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Browsing Weight (%)</label>
+                    <comment>Weight for browsing in "Just For You" calculation (default: 25)</comment>
+                    <validate>validate-digits</validate>
+                </field>
+
+                <field id="min_history_items" translate="label comment" type="text" sortOrder="70"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Minimum History Items</label>
+                    <comment>Minimum number of items in history before showing personalized recommendations (default: 2)</comment>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                </field>
+
+                <field id="show_on_homepage" translate="label" type="select" sortOrder="80"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show on Homepage</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="show_on_category" translate="label" type="select" sortOrder="90"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show on Category Pages</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="show_on_product" translate="label" type="select" sortOrder="100"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show on Product Pages</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+
+            <!-- LLM Re-Ranking Configuration -->
+            <group id="llm_reranking" translate="label comment" sortOrder="80"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Claude AI Re-Ranking</label>
+                <comment><![CDATA[Use Anthropic Claude to intelligently re-rank product recommendations for better relevance and conversion. This adds a second layer of AI reasoning on top of vector similarity.]]></comment>
+
+                <field id="enabled" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Claude Re-Ranking</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Enable intelligent re-ranking using Anthropic Claude. Requires API key from console.anthropic.com.]]></comment>
+                </field>
+
+                <field id="provider" translate="label comment" type="select" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>LLM Provider</label>
+                    <source_model>NavinDBhudiya\ProductRecommendation\Model\Config\Source\LlmProvider</source_model>
+                    <comment><![CDATA[Uses Anthropic Claude AI for intelligent product recommendations.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="api_key" translate="label comment" type="obscure" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Anthropic API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <comment><![CDATA[Your API key from Anthropic Claude. Get your API key: <a href="https://console.anthropic.com" target="_blank">https://console.anthropic.com</a>]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="model" translate="label comment" type="select" sortOrder="40"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Claude Model</label>
+                    <source_model>NavinDBhudiya\ProductRecommendation\Model\Config\Source\LlmModel</source_model>
+                    <comment><![CDATA[Sonnet 4.5 recommended for most use cases. Opus 4.5 for maximum intelligence. Haiku 4.5 for fastest performance. All models support 200K context.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="temperature" translate="label comment" type="text" sortOrder="50"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Temperature</label>
+                    <comment><![CDATA[Controls randomness (0-1). Lower = more focused, Higher = more creative. Recommended: 0.7]]></comment>
+                    <validate>validate-number validate-number-range number-range-0-1</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="candidate_count" translate="label comment" type="text" sortOrder="60"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Candidate Count</label>
+                    <comment><![CDATA[Number of products to send to LLM for re-ranking. More = better results but higher cost. Recommended: 20]]></comment>
+                    <validate>validate-number validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,162 @@
+{
+    "ai_customer_profile": {
+        "column": {
+            "profile_id": true,
+            "customer_id": true,
+            "profile_type": true,
+            "embedding_vector": true,
+            "source_product_ids": true,
+            "product_count": true,
+            "store_id": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "index": {
+            "AI_CUSTOMER_PROFILE_CUSTOMER_ID": true,
+            "AI_CUSTOMER_PROFILE_PROFILE_TYPE": true,
+            "AI_CUSTOMER_PROFILE_UPDATED_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "AI_CUSTOMER_PROFILE_CUSTOMER_TYPE_STORE": true
+        }
+    },
+    "ai_personalized_recommendations": {
+        "column": {
+            "recommendation_id": true,
+            "customer_id": true,
+            "recommendation_type": true,
+            "product_ids": true,
+            "scores": true,
+            "store_id": true,
+            "created_at": true,
+            "expires_at": true
+        },
+        "index": {
+            "AI_PERSONALIZED_REC_CUSTOMER_ID": true,
+            "AI_PERSONALIZED_REC_EXPIRES_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "AI_PERSONALIZED_REC_CUSTOMER_TYPE_STORE": true
+        }
+    },
+    "ai_guest_browsing_history": {
+        "column": {
+            "history_id": true,
+            "session_id": true,
+            "product_id": true,
+            "store_id": true,
+            "viewed_at": true
+        },
+        "index": {
+            "AI_GUEST_BROWSING_SESSION_ID": true,
+            "AI_GUEST_BROWSING_VIEWED_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "navindbhudiya_ai_customer_profile": {
+        "column": {
+            "profile_id": true,
+            "customer_id": true,
+            "profile_type": true,
+            "embedding_vector": true,
+            "source_product_ids": true,
+            "product_count": true,
+            "store_id": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "index": {
+            "NAVINDBHUDIYA_AI_CUSTOMER_PROFILE_CUSTOMER_ID": true,
+            "NAVINDBHUDIYA_AI_CUSTOMER_PROFILE_PROFILE_TYPE": true,
+            "NAVINDBHUDIYA_AI_CUSTOMER_PROFILE_UPDATED_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "NAVINDBHUDIYA_AI_CSTR_PROFILE_CSTR_ID_PROFILE_TYPE_STORE_ID": true
+        }
+    },
+    "navindbhudiya_ai_personalized_recommendations": {
+        "column": {
+            "recommendation_id": true,
+            "customer_id": true,
+            "recommendation_type": true,
+            "product_ids": true,
+            "scores": true,
+            "store_id": true,
+            "created_at": true,
+            "expires_at": true
+        },
+        "index": {
+            "NAVINDBHUDIYA_AI_PERSONALIZED_RECOMMENDATIONS_CUSTOMER_ID": true,
+            "NAVINDBHUDIYA_AI_PERSONALIZED_RECOMMENDATIONS_EXPIRES_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "UNQ_F48D3CE838967F130A70E61C0E1A67B3": true
+        }
+    },
+    "navindbhudiya_ai_guest_browsing_history": {
+        "column": {
+            "history_id": true,
+            "session_id": true,
+            "product_id": true,
+            "store_id": true,
+            "viewed_at": true
+        },
+        "index": {
+            "NAVINDBHUDIYA_AI_GUEST_BROWSING_HISTORY_SESSION_ID": true,
+            "NAVINDBHUDIYA_AI_GUEST_BROWSING_HISTORY_VIEWED_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "navindbhudiya_ai_trending_products": {
+        "column": {
+            "trending_id": true,
+            "product_id": true,
+            "store_id": true,
+            "trend_score": true,
+            "sales_count": true,
+            "period_days": true,
+            "updated_at": true
+        },
+        "index": {
+            "NAVINDBHUDIYA_AI_TRENDING_PRODUCTS_TREND_SCORE": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "NAVINDBHUDIYA_AI_TRENDING_PRDS_PRD_ID_STORE_ID_PERIOD_DAYS": true
+        }
+    },
+    "navindbhudiya_product_recommendation_llm_ranking": {
+        "column": {
+            "id": true,
+            "customer_id": true,
+            "product_id": true,
+            "recommendation_type": true,
+            "store_id": true,
+            "ranked_product_ids": true,
+            "ranking_metadata": true,
+            "created_at": true,
+            "expires_at": true,
+            "model_used": true,
+            "estimated_cost": true
+        },
+        "index": {
+            "IDX_AD295E14D8156C0F5E296C0A29089AF1": true,
+            "IDX_2A2BDF6FF1C51B5EF9062EDE86C35A1E": true,
+            "NAVINDBHUDIYA_PRODUCT_RECOMMENDATION_LLM_RANKING_EXPIRES_AT": true,
+            "NAVINDBHUDIYA_PRODUCT_RECOMMENDATION_LLM_RANKING_CUSTOMER_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_08206623352D8E8E2037AC4A675883E5": true,
+            "FK_B484786B5401BE46E49005A1196BB413": true
+        }
+    }
+}
